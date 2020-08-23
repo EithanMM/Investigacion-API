@@ -17,10 +17,14 @@ namespace Investigacion.WebApi.Controllers {
     public class InvestigadorController : ControllerBase {
 
         #region Variables y constructor
-        private readonly InvestigadorInterfaceCore Investigador;
+        private readonly ILecturaCore<InvestigadorModel> InvestigadorLectura;
+        private readonly IEliminarCore<InvestigadorModel> InvestigadorEliminar;
+        private readonly IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO> InvestigadorEscritura;
 
-        public InvestigadorController(InvestigadorInterfaceCore Investigador) {
-            this.Investigador = Investigador;
+        public InvestigadorController(ILecturaCore<InvestigadorModel> InvestigadorLectura, IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO> InvestigadorEscritura, IEliminarCore<InvestigadorModel> InvestigadorEliminar) {
+            this.InvestigadorLectura = InvestigadorLectura;
+            this.InvestigadorEliminar = InvestigadorEliminar;
+            this.InvestigadorEscritura = InvestigadorEscritura;
         }
         #endregion
 
@@ -34,7 +38,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Agregar([FromBody] AgregarInvestigadorDTO Modelo) {
 
-            InvestigadorModel Resultado = await Investigador.Agregar(Modelo);
+            InvestigadorModel Resultado = await InvestigadorEscritura.Agregar(Modelo);
             RespuestaApi<InvestigadorModel> Respuesta = new RespuestaApi<InvestigadorModel>(Resultado);
             return Created("Ok", Respuesta);
         }
@@ -49,7 +53,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarInvestigadorDTO Modelo) {
 
-            InvestigadorModel Resultado = await Investigador.Actualizar(Modelo);
+            InvestigadorModel Resultado = await InvestigadorEscritura.Actualizar(Modelo);
             RespuestaApi<InvestigadorModel> Respuesta = new RespuestaApi<InvestigadorModel>(Resultado);
             return Ok(Respuesta);
         }
@@ -64,7 +68,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Obtener(string Consecutivo) {
 
-            InvestigadorModel Resultado = await Investigador.Obtener(Consecutivo);
+            InvestigadorModel Resultado = await InvestigadorLectura.Obtener(Consecutivo);
             RespuestaApi<InvestigadorModel> Respuesta = new RespuestaApi<InvestigadorModel>(Resultado);
             return Ok(Respuesta);
         }
@@ -78,7 +82,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Listar() {
 
-            IEnumerable<InvestigadorModel> Resultado = await Investigador.Listar();
+            IEnumerable<InvestigadorModel> Resultado = await InvestigadorLectura.Listar();
             RespuestaApi<IEnumerable<InvestigadorModel>> Respuesta = new RespuestaApi<IEnumerable<InvestigadorModel>>(Resultado);
             return Ok(Respuesta);
         }
@@ -91,7 +95,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<Paginacion<InvestigadorModel>>))]
         public async Task<IActionResult> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
 
-            var Resultado = await Investigador.ListarPaginacion(NumeroPagina, TamanoPagina);
+            var Resultado = await InvestigadorLectura.ListarPaginacion(NumeroPagina, TamanoPagina);
             Metadata MetaData = PaginationHelper<InvestigadorModel>.SetMetaData(Resultado);
             RespuestaApi<Paginacion<InvestigadorModel>> Respuesta = new RespuestaApi<Paginacion<InvestigadorModel>>(Resultado) { Meta = MetaData };
             return Ok(Respuesta);
@@ -109,7 +113,7 @@ namespace Investigacion.WebApi.Controllers {
         [HttpDelete]
         public async Task<IActionResult> Eliminar(string Consecutivo) {
 
-            bool Resultado = await Investigador.Eliminar(Consecutivo);
+            bool Resultado = await InvestigadorEliminar.Eliminar(Consecutivo);
             var Respuesta = new RespuestaApi<bool>(Resultado);
             return Ok(Respuesta);
         }

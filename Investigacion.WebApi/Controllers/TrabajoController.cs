@@ -1,6 +1,8 @@
 ﻿using Investigacion.InterfaceCore;
 using Investigacion.Model;
+using Investigacion.Model.CustomEntities;
 using Investigacion.Model.Trabajo.DTOModels;
+using Investigacion.WebApi.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net;
@@ -13,10 +15,12 @@ namespace Investigacion.WebApi.Controllers {
     public class TrabajoController : ControllerBase {
 
         #region Variables y constructor
-        private readonly TrabajoInterfaceCore Trabajo;
+        private readonly ILecturaCore<TrabajoModel> TrabajoLectura;
+        private readonly IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO> TrabajoLecturaEscritura;
 
-        public TrabajoController(TrabajoInterfaceCore Trabajo) {
-            this.Trabajo = Trabajo;
+        public TrabajoController(ILecturaCore<TrabajoModel> TrabajoLectura, IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO> TrabajoLecturaEscritura) {
+            this.TrabajoLectura = TrabajoLectura;
+            this.TrabajoLecturaEscritura = TrabajoLecturaEscritura;
         }
         #endregion
 
@@ -28,7 +32,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Agregar([FromBody] AgregarTrabajoDTO Modelo) {
 
-            TrabajoModel Resultado = await Trabajo.Agregar(Modelo);
+            TrabajoModel Resultado = await TrabajoLecturaEscritura.Agregar(Modelo);
             RespuestaApi<TrabajoModel> Respuesta = new RespuestaApi<TrabajoModel>(Resultado);
             return Created("Ok", Respuesta);
         }
@@ -42,9 +46,24 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Listar() {
 
-            IEnumerable<TrabajoModel> Resultado = await Trabajo.Listar();
+            IEnumerable<TrabajoModel> Resultado = await TrabajoLectura.Listar();
             RespuestaApi<IEnumerable<TrabajoModel>> Respuesta = new RespuestaApi<IEnumerable<TrabajoModel>>(Resultado);
             return Ok(Respuesta);
+        }
+
+        /// <summary>
+        /// Obtiene los registros de los trabajos. segun su paginacion
+        /// </summary>
+        [HttpGet]
+        [ActionName("ListarPaginacion")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<Paginacion<TrabajoModel>>))]
+        public async Task<IActionResult> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+
+            var Resultado = await TrabajoLectura.ListarPaginacion(NumeroPagina, TamanoPagina);
+            Metadata MetaData = PaginationHelper<TrabajoModel>.SetMetaData(Resultado);
+            RespuestaApi<Paginacion<TrabajoModel>> Respuesta = new RespuestaApi<Paginacion<TrabajoModel>>(Resultado) { Meta = MetaData };
+            return Ok(Respuesta);
+            //Response.Headers.Add("X-Pagination", Utf8Json.JsonSerializer.ToJsonString(MetaData));
         }
         #endregion
     }

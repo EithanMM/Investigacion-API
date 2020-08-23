@@ -5,6 +5,10 @@ using Investigacion.DataAccess;
 using Investigacion.DataAccess.EntityFramework;
 using Investigacion.InterfaceCore;
 using Investigacion.InterfaceDataAccess;
+using Investigacion.Model;
+using Investigacion.Model.Investigador.DTOModels;
+using Investigacion.Model.TipoTrabajo.DTOModels;
+using Investigacion.Model.Trabajo.DTOModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -52,16 +56,33 @@ namespace Investigacion.WebApi {
             option.UseSqlServer(Configuration.GetConnectionString("INVESTIGACION_DB")));
             /****************************************************************/
 
-            /************* Binding of dependency Injection *******************/
-            /*** Si se quisiera cambiar de motor de DB, deberia hacerse otra clase 'Repositorio' que se conecte a ese DB ***/
-            services.AddTransient<InvestigadorInterfaceCore, InvestigadorCore>();
-            services.AddTransient<TipoTrabajoInterfaceCore, TipoTrabajoCore>();
-            services.AddTransient<TrabajoInterfaceCore, TrabajoCore>();
+            /*********************** INJECT DEPENDENCY II ******************************/
+            /**************************** LECTURA ***************************************/
+            services.AddTransient<ILecturaCore<InvestigadorModel>, InvestigadorCore>();
+            services.AddTransient<ILecturaCore<TipoTrabajoModel>, TipoTrabajoCore>();
+            services.AddTransient<ILecturaCore<TrabajoModel>, TrabajoCore>();
+            /*************************** ESCRITURA **************************************/
+            services.AddTransient<IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
+            services.AddTransient<IEscrituraCore<TipoTrabajoModel, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoCore>();
+            services.AddTransient<IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoCore>();
+            /************************** ELIMINACION *************************************/
+            services.AddTransient<IEliminarCore<InvestigadorModel>, InvestigadorCore>();
+            services.AddTransient<IEliminarCore<TipoTrabajoModel>, TipoTrabajoCore>();
 
-            services.AddTransient<InvestigadorInterfaceDataAccess, InvestigadorDataAccess>();
-            services.AddTransient<TipoTrabajoInterfaceDataAccess, TipoTrabajoDataAccess>();
-            services.AddTransient<TrabajoInterfaceDataAccess, TrabajoDataAccess>();
-            /****************************************************************/
+
+            /**************************** LECTURA ***************************************/
+            services.AddTransient<ILecturaDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
+            services.AddTransient<ILecturaDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
+            services.AddTransient<ILecturaDataAccess<TrabajoModel>, TrabajoDataAccess>();
+            /*************************** ESCRITURA **************************************/
+            services.AddTransient<IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoDataAccess>();
+            /************************** ELIMINACION *************************************/
+            services.AddTransient<IEliminarDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
+            services.AddTransient<IEliminarDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
+            /**************************************************************************/
+            /*****************************************************************************/
 
             /************************ AUTHENTICATION ************************/
             services.AddAuthentication(options => {

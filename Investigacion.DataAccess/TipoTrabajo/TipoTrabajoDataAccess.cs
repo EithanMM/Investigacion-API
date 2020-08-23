@@ -13,7 +13,9 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Investigacion.DataAccess {
-    public class TipoTrabajoDataAccess : TipoTrabajoInterfaceDataAccess {
+    public class TipoTrabajoDataAccess : ILecturaDataAccess<TipoTrabajoModel>,
+                                         IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>,
+                                         IEliminarDataAccess<TipoTrabajoModel> {
 
         #region Variables y constructor
         private readonly InvestigacionDBContext Contexto;
@@ -26,7 +28,6 @@ namespace Investigacion.DataAccess {
             this.ConnectionString = Contexto.Database.GetDbConnection().ConnectionString;
         }
         #endregion
-
 
         #region Metodos
 

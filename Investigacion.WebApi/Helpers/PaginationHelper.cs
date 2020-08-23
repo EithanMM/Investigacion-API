@@ -2,13 +2,13 @@
 using Investigacion.Model.CustomEntities;
 
 namespace Investigacion.WebApi.Helpers {
-    public class PaginationHelper<T> {
+    public class PaginationHelper<T> where T : class {
 
         #region Metodos
         /// <summary>
         /// Obtiene un objeto que contiene informacion de paginacion.
         /// </summary>
-        public static object SetXPaginationHeaderData(Paginacion<InvestigadorModel> Datos) {
+        public static object SetXPaginationHeaderData(Paginacion<T> Datos) {
             return new {
                 Datos.PaginaActual,
                 Datos.TotalPaginas,

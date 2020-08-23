@@ -15,7 +15,9 @@ using System.Threading.Tasks;
 
 namespace Investigacion.DataAccess {
 
-    public class InvestigadorDataAccess : InvestigadorInterfaceDataAccess {
+    public class InvestigadorDataAccess : ILecturaDataAccess<InvestigadorModel>,
+                                          IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>,
+                                          IEliminarDataAccess<InvestigadorModel> {
 
         #region Variables y Constructor
         private readonly InvestigacionDBContext Contexto;
@@ -31,7 +33,6 @@ namespace Investigacion.DataAccess {
         #endregion
 
         #region Metodos
-
         public async Task<string> Agregar(AgregarInvestigadorDTO ModeloDTO) {
 
             using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {

@@ -14,7 +14,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Investigacion.DataAccess {
-    public class TrabajoDataAccess : TrabajoInterfaceDataAccess {
+    public class TrabajoDataAccess : ILecturaDataAccess<TrabajoModel>,
+                                     IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO> {
 
         #region Variables y constructor
         private readonly InvestigacionDBContext Contexto;
@@ -47,6 +48,10 @@ namespace Investigacion.DataAccess {
             }
         }
 
+        public Task<string> Actualizar(ActualizarTrabajoDTO ModeloDTO) {
+            throw new NotImplementedException();
+        }
+
         public async Task<string> Obtener(string Consecutivo) {
 
             using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {
@@ -72,10 +77,6 @@ namespace Investigacion.DataAccess {
                     commandType: CommandType.StoredProcedure);
                 return Utf8Json.JsonSerializer.ToJsonString(Resultado);
             }
-        }
-
-        public async Task<string> Eliminar(string Consecutivo) {
-            throw new NotImplementedException();
         }
         #endregion
     }
