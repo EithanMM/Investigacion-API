@@ -5,8 +5,9 @@ namespace Investigacion.DataAccess.EntityFramework
 {
     public partial class TAB_ROL
     {
-        public int LLP_Id { get; set; }
-        public string Consecutivo { get; set; }
+        public Guid LLP_Id { get; set; }
+        public int NumeroRegistro { get; set; }
+        public Guid? Consecutivo { get; set; }
         public string Descripcion { get; set; }
     }
 }

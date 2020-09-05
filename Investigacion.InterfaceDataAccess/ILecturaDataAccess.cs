@@ -12,5 +12,10 @@ namespace Investigacion.InterfaceDataAccess {
         /// Obtiene un registro de la BD segun su consecutivo
         /// </summary>
         Task<string> Obtener(string Consecutivo);
+
+        /// <summary>
+        /// Obtiene los registros de la BD segun su paginacion especifica.
+        /// </summary>
+        Task<string> ListarPaginacion(int RegistrosOmitidos, int TamanoPagina);
     }
 }

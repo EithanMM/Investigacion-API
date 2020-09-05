@@ -11,8 +11,9 @@ namespace Investigacion.DataAccess.EntityFramework
             TAB_TRABAJO = new HashSet<TAB_TRABAJO>();
         }
 
-        public int LLP_Id { get; set; }
-        public string Consecutivo { get; set; }
+        public Guid LLP_Id { get; set; }
+        public Guid? Consecutivo { get; set; }
+        public int NumeroRegistro { get; set; }
         public string Cedula { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }

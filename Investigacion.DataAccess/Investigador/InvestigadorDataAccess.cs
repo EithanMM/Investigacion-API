@@ -95,6 +95,21 @@ namespace Investigacion.DataAccess {
                 return (RespuestaBD > 0) ? true : false;
             }
         }
+
+        public async Task<string> ListarPaginacion(int RegistrosOmitidos, int TamanoPagina) {
+
+            using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("SaltoRegistros", RegistrosOmitidos);
+                dynamicParameters.Add("TamanoPagina", TamanoPagina);
+                dynamicParameters.Add("Total", null, DbType.Int32, direction: ParameterDirection.Output); //Nos permite leer el resultado.
+
+                var Resultado = await DbConexion.QueryMultipleAsync("dbo.[SP_OBTENER_TODOS_INVESTIGADOR_PAGINACION]", param: dynamicParameters, commandType: CommandType.StoredProcedure);
+                EntidadPaginacion<InvestigadorModel> Respuesta  = new EntidadPaginacion<InvestigadorModel>(await Resultado.ReadAsync<InvestigadorModel>(), dynamicParameters.Get<int>("@Total"));
+                return Utf8Json.JsonSerializer.ToJsonString(Respuesta);
+            }
+        }
         #endregion
     }
 }

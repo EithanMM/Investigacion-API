@@ -78,6 +78,10 @@ namespace Investigacion.DataAccess {
                 return Utf8Json.JsonSerializer.ToJsonString(Resultado);
             }
         }
+
+        public Task<string> ListarPaginacion(int RegistrosOmitidos, int TamanoPagina) {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

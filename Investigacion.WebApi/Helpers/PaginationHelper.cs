@@ -1,5 +1,4 @@
-﻿using Investigacion.Model;
-using Investigacion.Model.CustomEntities;
+﻿using Investigacion.Model.CustomEntities;
 
 namespace Investigacion.WebApi.Helpers {
     public class PaginationHelper<T> where T : class {

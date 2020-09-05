@@ -66,12 +66,11 @@ namespace Investigacion.Core {
 
             NumeroPagina = (NumeroPagina > 0) ? NumeroPagina : PaginaDefault;  // Si el numero de pagina menor o igual a 0, se setea en 1.
             TamanoPagina = (TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; // Si el tamano de pagina menor o igual a 0, se setea en 5.
+            NumeroPagina = (NumeroPagina - 1);
 
-            var Respuesta = await ILecturanvestigador.Listar();
-            var RespuestaPaginada = Paginacion<InvestigadorModel>.Paginar(
-                Utf8Json.JsonSerializer.Deserialize<IEnumerable<InvestigadorModel>>(Respuesta),
-                (int)NumeroPagina, (int)TamanoPagina);
-
+            var Respuesta = await ILecturanvestigador.ListarPaginacion((int)NumeroPagina * (int)TamanoPagina, (int)TamanoPagina);
+            EntidadPaginacion<InvestigadorModel> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<InvestigadorModel>>(Respuesta);
+            var RespuestaPaginada = Paginacion<InvestigadorModel>.PaginarSQL(Objeto.Data, (int)NumeroPagina, (int)TamanoPagina, Objeto.Total);
             return RespuestaPaginada;
         }
 

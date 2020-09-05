@@ -92,6 +92,10 @@ namespace Investigacion.DataAccess {
                 return (RespuestaBD > 0) ? true : false;
             }
         }
+
+        public Task<string> ListarPaginacion(int RegistrosOmitidos, int TamanoPagina) {
+            throw new System.NotImplementedException();
+        }
         #endregion
     }
 }

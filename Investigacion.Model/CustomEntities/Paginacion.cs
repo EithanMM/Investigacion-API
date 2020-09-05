@@ -5,7 +5,9 @@ using System.Linq;
 namespace Investigacion.Model.CustomEntities {
     /*
      * Clase custom para poder generar
-     * resultados paginados y con informacion util.
+     * resultados paginados y con informacion util,
+     * clase generada principalmente para su uso
+     * en la capa Core.
      */
     public class Paginacion<T> : List<T> {
 
@@ -38,11 +40,18 @@ namespace Investigacion.Model.CustomEntities {
         /// Genera los la informacion necesaria para la paginacion
         /// </summary>
         public static Paginacion<T> Paginar(IEnumerable<T> Raiz, int NumeroPagina, int TamanoPagina) {
-
             var Tamano = Raiz.Count();
             var Elementos = Raiz.Skip((NumeroPagina - 1) * TamanoPagina).Take(TamanoPagina).ToList();
 
             return new Paginacion<T>(Elementos, Tamano, NumeroPagina, TamanoPagina);
+        }
+
+        /// <summary>
+        /// Genera la informacion encesaria para la paginacion, desde SQL
+        /// </summary>
+        public static Paginacion<T> PaginarSQL(IEnumerable<T> Raiz, int NumeroPagina, int TamanoPagina, int TotalRegistros) {
+            NumeroPagina++;
+            return new Paginacion<T>(Raiz.ToList(), TotalRegistros, NumeroPagina, TamanoPagina);
         }
         #endregion
 

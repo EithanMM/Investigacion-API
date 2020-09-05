@@ -16,11 +16,12 @@ namespace Investigacion.DataAccess.Helper {
         public static DataTable AgregarInvestigadorUDT(AgregarInvestigadorDTO Modelo) {
 
             DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("Consecutivo", typeof(string));
             Resultado.Columns.Add("Cedula", typeof(string));
             Resultado.Columns.Add("Nombre", typeof(string));
             Resultado.Columns.Add("Apellido", typeof(string));
 
-            Resultado.Rows.Add(Modelo.Cedula, Modelo.Nombre, Modelo.Apellido);
+            Resultado.Rows.Add(null, Modelo.Cedula, Modelo.Nombre, Modelo.Apellido);
             return Resultado;
         }
 

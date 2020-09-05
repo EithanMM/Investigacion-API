@@ -10,8 +10,9 @@ namespace Investigacion.DataAccess.EntityFramework
             TAB_INFORMACION_INVESTIGADOR = new HashSet<TAB_INFORMACION_INVESTIGADOR>();
         }
 
-        public int LLP_Id { get; set; }
-        public string Consecutivo { get; set; }
+        public Guid LLP_Id { get; set; }
+        public int NumeroRegistro { get; set; }
+        public Guid? Consecutivo { get; set; }
         public string Descripcion { get; set; }
 
         public virtual ICollection<TAB_INFORMACION_INVESTIGADOR> TAB_INFORMACION_INVESTIGADOR { get; set; }
