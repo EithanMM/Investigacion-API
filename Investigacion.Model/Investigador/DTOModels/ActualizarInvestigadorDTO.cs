@@ -6,7 +6,7 @@ namespace Investigacion.Model.Investigador.DTOModels {
     public class ActualizarInvestigadorDTO {
 
         #region Atributos
-        public string Consecutivo { get; set; }
+        public System.Guid Consecutivo { get; set; }
         public string Cedula { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }

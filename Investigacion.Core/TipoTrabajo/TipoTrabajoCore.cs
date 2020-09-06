@@ -13,14 +13,14 @@ namespace Investigacion.Core {
                                    IEliminarCore<TipoTrabajoModel> {
 
         #region Variables y cosntructor
-        private readonly ILecturaDataAccess<InvestigadorModel> TipoTrabajoLectura;
+        private readonly ILecturaDataAccess<TipoTrabajoModel> TipoTrabajoLectura;
         private readonly IEliminarDataAccess<TipoTrabajoModel> TipoTrabajoLecturaEliminar;
         private readonly IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO> TipoTrabajoLecturaEscritura;
         private static int PosicionMensajeError = 6;
         private static int PaginaDefault = 1;
         private static int RegistrosDefault = 5;
 
-        public TipoTrabajoCore(ILecturaDataAccess<InvestigadorModel> TipoTrabajoLectura, IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO> TipoTrabajoLecturaEscritura, IEliminarDataAccess<TipoTrabajoModel> TipoTrabajoLecturaEliminar) {
+        public TipoTrabajoCore(ILecturaDataAccess<TipoTrabajoModel> TipoTrabajoLectura, IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO> TipoTrabajoLecturaEscritura, IEliminarDataAccess<TipoTrabajoModel> TipoTrabajoLecturaEliminar) {
             this.TipoTrabajoLectura = TipoTrabajoLectura;
             this.TipoTrabajoLecturaEliminar = TipoTrabajoLecturaEliminar;
             this.TipoTrabajoLecturaEscritura = TipoTrabajoLecturaEscritura;

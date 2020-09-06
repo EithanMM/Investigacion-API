@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Dapper;
-using Investigacion.DataAccess.EntityFramework;
 using Investigacion.DataAccess.Helper;
 using Investigacion.InterfaceDataAccess;
 using Investigacion.Model;
 using Investigacion.Model.TipoTrabajo.DTOModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -18,14 +18,13 @@ namespace Investigacion.DataAccess {
                                          IEliminarDataAccess<TipoTrabajoModel> {
 
         #region Variables y constructor
-        private readonly InvestigacionDBContext Contexto;
         private readonly IMapper Mapper;
         private string ConnectionString = "";
+        private readonly IConfiguration Configuration;
 
-        public TipoTrabajoDataAccess(InvestigacionDBContext Contexto, IMapper Mapper) {
-            this.Contexto = Contexto;
+        public TipoTrabajoDataAccess(IMapper Mapper, IConfiguration Configuration) {
             this.Mapper = Mapper;
-            this.ConnectionString = Contexto.Database.GetDbConnection().ConnectionString;
+            ConnectionString = Configuration.GetConnectionString("INVESTIGACION_DB");
         }
         #endregion
 

@@ -41,7 +41,7 @@ namespace Investigacion.WebApi.Controllers {
         /// Obtiene los registros de los trabajos.
         /// </summary>
         [HttpGet]
-        [ActionName("ObtenerTodos")]
+        [ActionName("Listar")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<IEnumerable<TrabajoModel>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Listar() {

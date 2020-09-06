@@ -2,21 +2,22 @@ using AutoMapper;
 using Investigacion.Core;
 using Investigacion.Core.Excepciones;
 using Investigacion.DataAccess;
-using Investigacion.DataAccess.EntityFramework;
 using Investigacion.InterfaceCore;
 using Investigacion.InterfaceDataAccess;
 using Investigacion.Model;
 using Investigacion.Model.Investigador.DTOModels;
+using Investigacion.Model.Rol.DTOModels;
 using Investigacion.Model.TipoTrabajo.DTOModels;
 using Investigacion.Model.Trabajo.DTOModels;
+using Investigacion.Model.Usuario.DTOModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.IO;
 using System.Reflection;
@@ -52,37 +53,53 @@ namespace Investigacion.WebApi {
             /****************************************************************/
 
             /******************** CONNECTION STRING *************************/
-            services.AddDbContext<InvestigacionDBContext>(option => 
-            option.UseSqlServer(Configuration.GetConnectionString("INVESTIGACION_DB")));
+            //services.AddDbContext<InvestigacionDBContext>(option =>  // <- Usando DBcontext generado por E.F
+            //option.UseSqlServer(Configuration.GetConnectionString("INVESTIGACION_DB")));
             /****************************************************************/
 
             /*********************** INJECT DEPENDENCY II ******************************/
+
+            /*********************** INTERFACE - CORE ***********************************/
             /**************************** LECTURA ***************************************/
             services.AddTransient<ILecturaCore<InvestigadorModel>, InvestigadorCore>();
             services.AddTransient<ILecturaCore<TipoTrabajoModel>, TipoTrabajoCore>();
             services.AddTransient<ILecturaCore<TrabajoModel>, TrabajoCore>();
+            services.AddTransient<ILecturaCore<UsuarioModel>, UsuarioCore>();
+            services.AddTransient<ILecturaCore<RolModel>, RolCore>();
             /*************************** ESCRITURA **************************************/
             services.AddTransient<IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
             services.AddTransient<IEscrituraCore<TipoTrabajoModel, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoCore>();
             services.AddTransient<IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoCore>();
+            services.AddTransient<IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioCore>();
+            services.AddTransient<IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
             /************************** ELIMINACION *************************************/
             services.AddTransient<IEliminarCore<InvestigadorModel>, InvestigadorCore>();
             services.AddTransient<IEliminarCore<TipoTrabajoModel>, TipoTrabajoCore>();
+            /************************** SEGURIDAD *************************************/
+            services.AddTransient<ISeguridadCore<ActualizarPasswordDTO>, UsuarioCore>();
 
 
+            /*********************** INTERFACE - DATA ACCESS *****************************/
             /**************************** LECTURA ***************************************/
             services.AddTransient<ILecturaDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
             services.AddTransient<ILecturaDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
             services.AddTransient<ILecturaDataAccess<TrabajoModel>, TrabajoDataAccess>();
+            services.AddTransient<ILecturaDataAccess<UsuarioModel>, UsuarioDataAccess>();
+            services.AddTransient<ILecturaDataAccess<RolModel>, RolDataAccess>();
             /*************************** ESCRITURA **************************************/
             services.AddTransient<IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO>, RolDataAccess>();
             /************************** ELIMINACION *************************************/
             services.AddTransient<IEliminarDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
             services.AddTransient<IEliminarDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
+            /************************** SEGURIDAD *************************************/
+            services.AddTransient<ISeguridadDataAccess<ActualizarPasswordDTO>, UsuarioDataAccess>();
             /**************************************************************************/
-            /*****************************************************************************/
+
+
 
             /************************ AUTHENTICATION ************************/
             services.AddAuthentication(options => {
@@ -141,6 +158,7 @@ namespace Investigacion.WebApi {
             app.UseSwagger();
             app.UseSwaggerUI(options => {
                 options.SwaggerEndpoint("../swagger/v1/swagger.json", "Investigacion API");
+                options.DocExpansion(DocExpansion.None);
             });
         }
     }

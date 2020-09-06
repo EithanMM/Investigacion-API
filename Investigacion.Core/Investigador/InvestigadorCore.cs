@@ -14,13 +14,12 @@ namespace Investigacion.Core {
                                     IEliminarCore<InvestigadorModel> {
 
         #region Variables y constructor
-
+        private static int PaginaDefault = 1;
+        private static int RegistrosDefault = 5;
+        private static int PosicionMensajeError = 6;
         private readonly ILecturaDataAccess<InvestigadorModel> ILecturanvestigador;
         private readonly IEliminarDataAccess<InvestigadorModel> IEliminarInvestigador;
         private readonly IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO> IEscrituraInestigador;
-        private static int PosicionMensajeError = 6;
-        private static int PaginaDefault = 1;
-        private static int RegistrosDefault = 5;
 
 
         public InvestigadorCore(ILecturaDataAccess<InvestigadorModel> ILecturanvestigador, IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO> IEscrituraInestigador, IEliminarDataAccess<InvestigadorModel> IEliminarInvestigador) {

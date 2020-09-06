@@ -10,8 +10,8 @@ namespace Investigacion.Model {
         #endregion
 
         #region Atributos
-        public int IdInvestigador { get; set; }
-        public int IdTipoTrabajo { get; set; }
+        public System.Guid IdInvestigador { get; set; }
+        public System.Guid IdTipoTrabajo { get; set; }
         public string Consecutivo { get; set; }
         public string Nombre { get; set; }
         public DateTime Fecha { get; set; }

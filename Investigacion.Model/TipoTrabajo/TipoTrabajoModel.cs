@@ -12,7 +12,7 @@ namespace Investigacion.Model {
         #endregion
 
         #region Atributos
-        public string Consecutivo { get; set; }
+        public System.Guid Consecutivo { get; set; }
         public string Descripcion { get; set; }
         #endregion
     }

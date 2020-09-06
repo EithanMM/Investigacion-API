@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Dapper;
-using Investigacion.DataAccess.EntityFramework;
 using Investigacion.DataAccess.Helper;
 using Investigacion.InterfaceDataAccess;
 using Investigacion.Model;
 using Investigacion.Model.Investigador.DTOModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -20,15 +20,13 @@ namespace Investigacion.DataAccess {
                                           IEliminarDataAccess<InvestigadorModel> {
 
         #region Variables y Constructor
-        private readonly InvestigacionDBContext Contexto;
         private readonly IMapper Mapper;
         private string ConnectionString = "";
+        private readonly IConfiguration Configuration;
 
-        //Usando EF normal
-        public InvestigadorDataAccess(InvestigacionDBContext Contexto, IMapper Mapper) {
-            this.Contexto = Contexto;
+        public InvestigadorDataAccess(IMapper Mapper, IConfiguration Configuration) {
             this.Mapper = Mapper;
-            this.ConnectionString = Contexto.Database.GetDbConnection().ConnectionString;
+            ConnectionString = Configuration.GetConnectionString("INVESTIGACION_DB");
         }
         #endregion
 
@@ -106,7 +104,7 @@ namespace Investigacion.DataAccess {
                 dynamicParameters.Add("Total", null, DbType.Int32, direction: ParameterDirection.Output); //Nos permite leer el resultado.
 
                 var Resultado = await DbConexion.QueryMultipleAsync("dbo.[SP_OBTENER_TODOS_INVESTIGADOR_PAGINACION]", param: dynamicParameters, commandType: CommandType.StoredProcedure);
-                EntidadPaginacion<InvestigadorModel> Respuesta  = new EntidadPaginacion<InvestigadorModel>(await Resultado.ReadAsync<InvestigadorModel>(), dynamicParameters.Get<int>("@Total"));
+                EntidadPaginacion<InvestigadorModel> Respuesta = new EntidadPaginacion<InvestigadorModel>(await Resultado.ReadAsync<InvestigadorModel>(), dynamicParameters.Get<int>("@Total"));
                 return Utf8Json.JsonSerializer.ToJsonString(Respuesta);
             }
         }

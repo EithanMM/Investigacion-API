@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Dapper;
-using Investigacion.DataAccess.EntityFramework;
 using Investigacion.DataAccess.Helper;
 using Investigacion.InterfaceDataAccess;
 using Investigacion.Model;
 using Investigacion.Model.Trabajo.DTOModels;
 using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -18,14 +17,13 @@ namespace Investigacion.DataAccess {
                                      IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO> {
 
         #region Variables y constructor
-        private readonly InvestigacionDBContext Contexto;
         private readonly IMapper Mapper;
         private string ConnectionString = "";
+        private readonly IConfiguration Configuration;
 
-        public TrabajoDataAccess(InvestigacionDBContext Contexto, IMapper Mapper) {
-            this.Contexto = Contexto;
+        public TrabajoDataAccess(IMapper Mapper, IConfiguration Configuration) {
             this.Mapper = Mapper;
-            this.ConnectionString = Contexto.Database.GetDbConnection().ConnectionString;
+            ConnectionString = ConnectionString = Configuration.GetConnectionString("INVESTIGACION_DB");
         }
         #endregion
 

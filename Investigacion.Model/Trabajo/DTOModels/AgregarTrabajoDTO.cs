@@ -6,9 +6,9 @@ namespace Investigacion.Model.Trabajo.DTOModels {
 
         #region Atributos
         [JsonIgnore]
-        public string IdInvestigador { get; set; }
+        public System.Guid IdInvestigador { get; set; }
         [JsonIgnore]
-        public string IdTipoTrabajo { get; set; }
+        public System.Guid IdTipoTrabajo { get; set; }
         public string ConsecutivoInvestigador { get; set; }
         public string ConsecutivoTipoTrabajo { get; set; }
         public string Nombre { get; set; }

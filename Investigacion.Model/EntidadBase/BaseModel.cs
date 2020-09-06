@@ -5,7 +5,7 @@ namespace Investigacion.Model.EntidadBase {
 
         #region Atributos
         [JsonIgnore] /* Provoca que se ignore este atributo en swagger */
-        public string Id { get; set; }
+        public System.Guid Id { get; set; }
         public string Error { get; set; }
         #endregion
     }
