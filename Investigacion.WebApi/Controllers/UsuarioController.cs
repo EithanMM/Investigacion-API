@@ -16,14 +16,14 @@ namespace Investigacion.WebApi.Controllers {
     public class UsuarioController : ControllerBase {
 
         #region Variables y constructor
-        private readonly ILecturaCore<UsuarioModel> UsuarioLectura;
-        private readonly ISeguridadCore<ActualizarPasswordDTO> UsuarioSeguridad;
-        private readonly IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> UsuarioEscritura;
+        private readonly ILecturaCore<UsuarioModel> ILecturaUsuario;
+        private readonly ISeguridadCore<ActualizarPasswordDTO> ISeguridadUsuario;
+        private readonly IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> IEscrituraUsuario;
 
         public UsuarioController(ILecturaCore<UsuarioModel> UsuarioLectura, ISeguridadCore<ActualizarPasswordDTO> UsuarioSeguridad, IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> UsuarioEscritura) {
-            this.UsuarioLectura = UsuarioLectura;
-            this.UsuarioSeguridad = UsuarioSeguridad;
-            this.UsuarioEscritura = UsuarioEscritura;
+            this.ILecturaUsuario = UsuarioLectura;
+            this.ISeguridadUsuario = UsuarioSeguridad;
+            this.IEscrituraUsuario = UsuarioEscritura;
         }
         #endregion
 
@@ -37,7 +37,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Agregar([FromBody] AgregarUsuarioDTO Modelo) {
 
-            UsuarioModel Resultado = await UsuarioEscritura.Agregar(Modelo);
+            UsuarioModel Resultado = await IEscrituraUsuario.Agregar(Modelo);
             RespuestaApi<UsuarioModel> Respuesta = new RespuestaApi<UsuarioModel>(Resultado);
             return Created("Ok", Respuesta);
         }
@@ -51,7 +51,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Listar() {
 
-            IEnumerable<UsuarioModel> Resultado = await UsuarioLectura.Listar();
+            IEnumerable<UsuarioModel> Resultado = await ILecturaUsuario.Listar();
             RespuestaApi<IEnumerable<UsuarioModel>> Respuesta = new RespuestaApi<IEnumerable<UsuarioModel>>(Resultado);
             return Ok(Respuesta);
         }
@@ -64,7 +64,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<Paginacion<UsuarioModel>>))]
         public async Task<IActionResult> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
 
-            var Resultado = await UsuarioLectura.ListarPaginacion(NumeroPagina, TamanoPagina);
+            var Resultado = await ILecturaUsuario.ListarPaginacion(NumeroPagina, TamanoPagina);
             Metadata MetaData = PaginationHelper<UsuarioModel>.SetMetaData(Resultado);
             RespuestaApi<Paginacion<UsuarioModel>> Respuesta = new RespuestaApi<Paginacion<UsuarioModel>>(Resultado) { Meta = MetaData };
             return Ok(Respuesta);

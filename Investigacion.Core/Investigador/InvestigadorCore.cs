@@ -11,18 +11,18 @@ using System.Threading.Tasks;
 namespace Investigacion.Core {
     public class InvestigadorCore : ILecturaCore<InvestigadorModel>, 
                                     IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, 
-                                    IEliminarCore<InvestigadorModel> {
+                                    IEliminarCore {
 
         #region Variables y constructor
         private static int PaginaDefault = 1;
         private static int RegistrosDefault = 5;
         private static int PosicionMensajeError = 6;
         private readonly ILecturaDataAccess<InvestigadorModel> ILecturanvestigador;
-        private readonly IEliminarDataAccess<InvestigadorModel> IEliminarInvestigador;
+        private readonly IEliminarDataAccess IEliminarInvestigador;
         private readonly IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO> IEscrituraInestigador;
 
 
-        public InvestigadorCore(ILecturaDataAccess<InvestigadorModel> ILecturanvestigador, IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO> IEscrituraInestigador, IEliminarDataAccess<InvestigadorModel> IEliminarInvestigador) {
+        public InvestigadorCore(ILecturaDataAccess<InvestigadorModel> ILecturanvestigador, IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO> IEscrituraInestigador, IEliminarDataAccess IEliminarInvestigador) {
             this.ILecturanvestigador = ILecturanvestigador;
             this.IEscrituraInestigador = IEscrituraInestigador;
             this.IEliminarInvestigador = IEliminarInvestigador;
@@ -63,9 +63,9 @@ namespace Investigacion.Core {
 
         public async Task<Paginacion<InvestigadorModel>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
 
-            NumeroPagina = (NumeroPagina > 0) ? NumeroPagina : PaginaDefault;  // Si el numero de pagina menor o igual a 0, se setea en 1.
-            TamanoPagina = (TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; // Si el tamano de pagina menor o igual a 0, se setea en 5.
-            NumeroPagina = (NumeroPagina - 1);
+            NumeroPagina = ((int)NumeroPagina > 0) ? NumeroPagina : PaginaDefault;  // Si el numero de pagina menor o igual a 0, se setea en 1.
+            TamanoPagina = ((int)TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; // Si el tamano de pagina menor o igual a 0, se setea en 5.
+            NumeroPagina = ((int)NumeroPagina - 1);
 
             var Respuesta = await ILecturanvestigador.ListarPaginacion((int)NumeroPagina * (int)TamanoPagina, (int)TamanoPagina);
             EntidadPaginacion<InvestigadorModel> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<InvestigadorModel>>(Respuesta);
@@ -78,7 +78,7 @@ namespace Investigacion.Core {
             InvestigadorModel Respuesta;
 
             if (Consecutivo.Equals("")) throw new ExcepcionCore("No introdujo el consecutivo.");
-            string Resultado = await ILecturanvestigador.Obtener(Consecutivo.ToUpper());
+            string Resultado = await ILecturanvestigador.Obtener(Consecutivo);
             Respuesta = Utf8Json.JsonSerializer.Deserialize<InvestigadorModel>(Resultado);
             if (Respuesta == null) throw new NotFoundExcepcionCore("El investigador con consecutivo " + Consecutivo + " no existe");
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));

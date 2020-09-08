@@ -16,12 +16,12 @@ namespace Investigacion.WebApi.Controllers {
     public class RolController : ControllerBase {
 
         #region Variables y constructor
-        private readonly ILecturaCore<RolModel> RolLectura;
-        private readonly IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO> RolEscritura;
+        private readonly ILecturaCore<RolModel> ILecturaRol;
+        private readonly IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO> IEscrituraRol;
 
         public RolController(ILecturaCore<RolModel> RolLectura, IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO> RolEscritura) {
-            this.RolLectura = RolLectura;
-            this.RolEscritura = RolEscritura;
+            this.ILecturaRol = RolLectura;
+            this.IEscrituraRol = RolEscritura;
         }
         #endregion
 
@@ -35,7 +35,7 @@ namespace Investigacion.WebApi.Controllers {
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public async Task<IActionResult> Agregar([FromBody] AgregarRolDTO Modelo) {
 
-            RolModel Resultado = await RolEscritura.Agregar(Modelo);
+            RolModel Resultado = await IEscrituraRol.Agregar(Modelo);
             RespuestaApi<RolModel> Respuesta = new RespuestaApi<RolModel>(Resultado);
             return Created("Ok", Respuesta);
         }

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace Investigacion.DataAccess {
     public class TipoTrabajoDataAccess : ILecturaDataAccess<TipoTrabajoModel>,
                                          IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>,
-                                         IEliminarDataAccess<TipoTrabajoModel> {
+                                         IEliminarDataAccess {
 
         #region Variables y constructor
         private readonly IMapper Mapper;

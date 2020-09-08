@@ -12,14 +12,15 @@ namespace Investigacion.Core {
                            IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO> {
 
         #region Atrobutos y constructor
-        private readonly ILecturaDataAccess<RolModel> RolLectura;
-        private readonly IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO> RolEscritura;
-        private static int PosicionMensajeError = 6;
         private static int PaginaDefault = 1;
         private static int RegistrosDefault = 5;
+        private static int PosicionMensajeError = 6;
+        private readonly ILecturaDataAccess<RolModel> ILecturaRol;
+        private readonly IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO> IEscrituraRol;
+
         public RolCore(ILecturaDataAccess<RolModel> RolLectura, IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO> RolEscritura) {
-            this.RolLectura = RolLectura;
-            this.RolEscritura = RolEscritura;
+            this.ILecturaRol = RolLectura;
+            this.IEscrituraRol = RolEscritura;
         }
         #endregion
 
@@ -33,7 +34,7 @@ namespace Investigacion.Core {
             RolModel Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
-            string Resultado = await RolEscritura.Agregar(Modelo);
+            string Resultado = await IEscrituraRol.Agregar(Modelo);
             Respuesta = Utf8Json.JsonSerializer.Deserialize<RolModel>(Resultado);
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;

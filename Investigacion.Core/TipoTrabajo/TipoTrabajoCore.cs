@@ -10,20 +10,20 @@ using System.Threading.Tasks;
 namespace Investigacion.Core {
     public class TipoTrabajoCore : ILecturaCore<TipoTrabajoModel>,
                                    IEscrituraCore<TipoTrabajoModel, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>,
-                                   IEliminarCore<TipoTrabajoModel> {
+                                   IEliminarCore {
 
         #region Variables y cosntructor
-        private readonly ILecturaDataAccess<TipoTrabajoModel> TipoTrabajoLectura;
-        private readonly IEliminarDataAccess<TipoTrabajoModel> TipoTrabajoLecturaEliminar;
-        private readonly IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO> TipoTrabajoLecturaEscritura;
-        private static int PosicionMensajeError = 6;
         private static int PaginaDefault = 1;
         private static int RegistrosDefault = 5;
+        private static int PosicionMensajeError = 6;
+        private readonly IEliminarDataAccess IEliminarTipoTrabajo;
+        private readonly ILecturaDataAccess<TipoTrabajoModel> ILecturaTipoTrabajo;
+        private readonly IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO> IEscrituraTipoTrabajo;
 
-        public TipoTrabajoCore(ILecturaDataAccess<TipoTrabajoModel> TipoTrabajoLectura, IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO> TipoTrabajoLecturaEscritura, IEliminarDataAccess<TipoTrabajoModel> TipoTrabajoLecturaEliminar) {
-            this.TipoTrabajoLectura = TipoTrabajoLectura;
-            this.TipoTrabajoLecturaEliminar = TipoTrabajoLecturaEliminar;
-            this.TipoTrabajoLecturaEscritura = TipoTrabajoLecturaEscritura;
+        public TipoTrabajoCore(ILecturaDataAccess<TipoTrabajoModel> TipoTrabajoLectura, IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO> TipoTrabajoLecturaEscritura, IEliminarDataAccess TipoTrabajoLecturaEliminar) {
+            this.ILecturaTipoTrabajo = TipoTrabajoLectura;
+            this.IEliminarTipoTrabajo = TipoTrabajoLecturaEliminar;
+            this.IEscrituraTipoTrabajo = TipoTrabajoLecturaEscritura;
         }
         #endregion
 
@@ -33,7 +33,7 @@ namespace Investigacion.Core {
             TipoTrabajoModel Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
-            string Resultado = await TipoTrabajoLecturaEscritura.Agregar(Modelo);
+            string Resultado = await IEscrituraTipoTrabajo.Agregar(Modelo);
             Respuesta = Utf8Json.JsonSerializer.Deserialize<TipoTrabajoModel>(Resultado);
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
@@ -44,7 +44,7 @@ namespace Investigacion.Core {
             TipoTrabajoModel Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
-            string Resultado = await TipoTrabajoLecturaEscritura.Actualizar(Modelo);
+            string Resultado = await IEscrituraTipoTrabajo.Actualizar(Modelo);
             Respuesta = Utf8Json.JsonSerializer.Deserialize<TipoTrabajoModel>(Resultado);
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
@@ -55,7 +55,7 @@ namespace Investigacion.Core {
             TipoTrabajoModel Respuesta;
 
             if (Consecutivo == null) throw new ExcepcionCore("Debe digitar un consecutivo valido.");
-            string Resultado = await TipoTrabajoLectura.Obtener(Consecutivo.ToUpper());
+            string Resultado = await ILecturaTipoTrabajo.Obtener(Consecutivo.ToUpper());
             if (Resultado.Equals("")) throw new NotFoundExcepcionCore("El tipo de trabajo con consecutivo " + Consecutivo.ToUpper() + " no existe.");
             Respuesta = Utf8Json.JsonSerializer.Deserialize<TipoTrabajoModel>(Resultado);
             return Respuesta;
@@ -63,7 +63,7 @@ namespace Investigacion.Core {
 
         public async Task<IEnumerable<TipoTrabajoModel>> Listar() {
 
-            var Respuesta = await TipoTrabajoLectura.Listar();
+            var Respuesta = await ILecturaTipoTrabajo.Listar();
             if (Respuesta == null) throw new ExcepcionCore("Modelo nulo");
             IEnumerable<TipoTrabajoModel> Resultado = Utf8Json.JsonSerializer.Deserialize<IEnumerable<TipoTrabajoModel>>(Respuesta);
             return Resultado;
@@ -74,7 +74,7 @@ namespace Investigacion.Core {
             NumeroPagina = (NumeroPagina > 0) ? NumeroPagina : PaginaDefault;
             TamanoPagina = (TamanoPagina > 0) ? TamanoPagina : RegistrosDefault;
 
-            var Respuesta = await TipoTrabajoLectura.Listar();
+            var Respuesta = await ILecturaTipoTrabajo.Listar();
             var RespuestaPaginada = Paginacion<TipoTrabajoModel>.Paginar(
                 Utf8Json.JsonSerializer.Deserialize<IEnumerable<TipoTrabajoModel>>(Respuesta),
                 (int)NumeroPagina, (int)TamanoPagina);
@@ -85,7 +85,7 @@ namespace Investigacion.Core {
         public async Task<bool> Eliminar(string Consecutivo) {
 
             if (Consecutivo == null) throw new ExcepcionCore("No introdujo el consecutivo.");
-            bool Resultado = await TipoTrabajoLecturaEliminar.Eliminar(Consecutivo.ToUpper());
+            bool Resultado = await IEliminarTipoTrabajo.Eliminar(Consecutivo.ToUpper());
             if (!Resultado) throw new NotFoundExcepcionCore("El registro " + Consecutivo.ToUpper() + " no existe o ya fue eliminado.");
             return Resultado;
         }

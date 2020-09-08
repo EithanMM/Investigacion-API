@@ -73,8 +73,8 @@ namespace Investigacion.WebApi {
             services.AddTransient<IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioCore>();
             services.AddTransient<IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
             /************************** ELIMINACION *************************************/
-            services.AddTransient<IEliminarCore<InvestigadorModel>, InvestigadorCore>();
-            services.AddTransient<IEliminarCore<TipoTrabajoModel>, TipoTrabajoCore>();
+            services.AddTransient<IEliminarCore, InvestigadorCore>();
+            services.AddTransient<IEliminarCore, TipoTrabajoCore>();
             /************************** SEGURIDAD *************************************/
             services.AddTransient<ISeguridadCore<ActualizarPasswordDTO>, UsuarioCore>();
 
@@ -93,8 +93,10 @@ namespace Investigacion.WebApi {
             services.AddTransient<IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO>, RolDataAccess>();
             /************************** ELIMINACION *************************************/
-            services.AddTransient<IEliminarDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
-            services.AddTransient<IEliminarDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
+            services.AddTransient<IEliminarDataAccess, InvestigadorDataAccess>();
+            services.AddTransient<IEliminarDataAccess, TipoTrabajoDataAccess>();
+            ////services.AddTransient<IEliminarDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
+            ////services.AddTransient<IEliminarDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
             /************************** SEGURIDAD *************************************/
             services.AddTransient<ISeguridadDataAccess<ActualizarPasswordDTO>, UsuarioDataAccess>();
             /**************************************************************************/

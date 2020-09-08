@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 
 namespace Investigacion.InterfaceDataAccess {
-    public interface IEliminarDataAccess<T> where T : class {
+    public interface IEliminarDataAccess {
 
         /// <summary>
         /// Elimina un registro de la BD segun un consecutivo

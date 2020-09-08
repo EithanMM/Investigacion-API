@@ -17,14 +17,14 @@ namespace Investigacion.Core {
         private static int PaginaDefault = 1;
         private static int RegistrosDefault = 5;
         private static int PosicionMensajeError = 6;
-        private readonly ILecturaDataAccess<UsuarioModel> IUsuarioLectura;
-        private readonly ISeguridadDataAccess<ActualizarPasswordDTO> IUsuarioSeguridad;
-        private readonly IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO> IUsuarioEscritura;
+        private readonly ILecturaDataAccess<UsuarioModel> ILecturaUsuario;
+        private readonly ISeguridadDataAccess<ActualizarPasswordDTO> ISeguridadUsuario;
+        private readonly IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO> IEscrituraUsuario;
 
         public UsuarioCore(ILecturaDataAccess<UsuarioModel> UsuarioLectura, ISeguridadDataAccess<ActualizarPasswordDTO> UsuarioSeguridad, IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO> UsuarioEscritura) {
-            this.IUsuarioLectura = UsuarioLectura;
-            this.IUsuarioSeguridad = UsuarioSeguridad;
-            this.IUsuarioEscritura = UsuarioEscritura;
+            this.ILecturaUsuario = UsuarioLectura;
+            this.ISeguridadUsuario = UsuarioSeguridad;
+            this.IEscrituraUsuario = UsuarioEscritura;
         }
         #endregion
 
@@ -34,7 +34,7 @@ namespace Investigacion.Core {
             UsuarioModel Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
-            string Resultado = await IUsuarioEscritura.Agregar(Modelo);
+            string Resultado = await IEscrituraUsuario.Agregar(Modelo);
             Respuesta = Utf8Json.JsonSerializer.Deserialize<UsuarioModel>(Resultado);
             if (Respuesta == null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
@@ -50,7 +50,7 @@ namespace Investigacion.Core {
 
         public async Task<IEnumerable<UsuarioModel>> Listar() {
 
-            var Respuesta = await IUsuarioLectura.Listar();
+            var Respuesta = await ILecturaUsuario.Listar();
             if (Respuesta == null) throw new ExcepcionCore("Modelo nulo");
             IEnumerable<UsuarioModel> Resultado = Utf8Json.JsonSerializer.Deserialize<IEnumerable<UsuarioModel>>(Respuesta);
             return Resultado;
@@ -62,7 +62,7 @@ namespace Investigacion.Core {
             TamanoPagina = (TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; 
             NumeroPagina = (NumeroPagina - 1);
 
-            var Respuesta = await IUsuarioLectura.ListarPaginacion((int)NumeroPagina * (int)TamanoPagina, (int)TamanoPagina);
+            var Respuesta = await ILecturaUsuario.ListarPaginacion((int)NumeroPagina * (int)TamanoPagina, (int)TamanoPagina);
             EntidadPaginacion<UsuarioModel> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<UsuarioModel>>(Respuesta);
             var RespuestaPaginada = Paginacion<UsuarioModel>.PaginarSQL(Objeto.Data, (int)NumeroPagina, (int)TamanoPagina, Objeto.Total);
             return RespuestaPaginada;

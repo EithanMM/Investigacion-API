@@ -17,7 +17,7 @@ namespace Investigacion.DataAccess {
 
     public class InvestigadorDataAccess : ILecturaDataAccess<InvestigadorModel>,
                                           IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>,
-                                          IEliminarDataAccess<InvestigadorModel> {
+                                          IEliminarDataAccess {
 
         #region Variables y Constructor
         private readonly IMapper Mapper;
