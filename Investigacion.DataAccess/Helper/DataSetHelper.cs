@@ -129,5 +129,19 @@ namespace Investigacion.DataAccess.Helper {
             return Resultado;
         }
         #endregion
+
+        #region Metodos Extras UDT
+        public static DataTable AutenticarUsuario(AccesoUsuarioDTO Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("Consecutivo", typeof(System.Guid));
+            Resultado.Columns.Add("Usuario", typeof(string));
+            Resultado.Columns.Add("Email", typeof(string));
+            Resultado.Columns.Add("Password", typeof(string));
+
+            Resultado.Rows.Add(null, Modelo.Usuario, null, Modelo.Password);
+            return Resultado;
+        }
+        #endregion
     }
 }

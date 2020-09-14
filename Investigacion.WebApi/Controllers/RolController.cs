@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Investigacion.InterfaceCore;
 using Investigacion.Model;
 using Investigacion.Model.Rol.DTOModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Investigacion.WebApi.Controllers {

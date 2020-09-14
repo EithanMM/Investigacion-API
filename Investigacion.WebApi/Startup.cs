@@ -58,7 +58,6 @@ namespace Investigacion.WebApi {
             /****************************************************************/
 
             /*********************** INJECT DEPENDENCY II ******************************/
-
             /*********************** INTERFACE - CORE ***********************************/
             /**************************** LECTURA ***************************************/
             services.AddTransient<ILecturaCore<InvestigadorModel>, InvestigadorCore>();
@@ -76,8 +75,8 @@ namespace Investigacion.WebApi {
             services.AddTransient<IEliminarCore, InvestigadorCore>();
             services.AddTransient<IEliminarCore, TipoTrabajoCore>();
             /************************** SEGURIDAD *************************************/
-            services.AddTransient<ISeguridadCore<ActualizarPasswordDTO>, UsuarioCore>();
-
+            services.AddTransient<ISeguridadCore<ActualizarPasswordDTO, AccesoUsuarioDTO, RespuestaUsuarioDTO>, UsuarioCore>();
+            /**************************************************************************/
 
             /*********************** INTERFACE - DATA ACCESS *****************************/
             /**************************** LECTURA ***************************************/
@@ -95,24 +94,20 @@ namespace Investigacion.WebApi {
             /************************** ELIMINACION *************************************/
             services.AddTransient<IEliminarDataAccess, InvestigadorDataAccess>();
             services.AddTransient<IEliminarDataAccess, TipoTrabajoDataAccess>();
-            ////services.AddTransient<IEliminarDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
-            ////services.AddTransient<IEliminarDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
             /************************** SEGURIDAD *************************************/
-            services.AddTransient<ISeguridadDataAccess<ActualizarPasswordDTO>, UsuarioDataAccess>();
+            services.AddTransient<ISeguridadDataAccess<ActualizarPasswordDTO, AccesoUsuarioDTO>, UsuarioDataAccess>();
             /**************************************************************************/
-
-
 
             /************************ AUTHENTICATION ************************/
             services.AddAuthentication(options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-            }).AddJwtBearer(options => { /*Configuracion de validacion JWT*/
+            }).AddJwtBearer(options => {
+                /*Configuramos la validacion que se hace desde el JWT*/
                 options.TokenValidationParameters = new TokenValidationParameters {
                     ValidateIssuer = true, /* <= aplicacion cliente */
                     ValidateAudience = true,
-                    ValidateLifetime = true,
+                    ValidateLifetime = true, /* <= validamos el tiempo de vida del token*/
                     ValidateIssuerSigningKey = true, /* <= valida la firma del emisor*/
                     ValidIssuer = Configuration["Authentication:Issuer"],
                     ValidAudience = Configuration["Authentication:Audience"],
@@ -130,12 +125,12 @@ namespace Investigacion.WebApi {
                         Version = "v1"
                     });
 
+
                 string FileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 string FilePath = Path.Combine(AppContext.BaseDirectory, FileName);
                 options.IncludeXmlComments(FilePath);
             });
             /****************************************************************/
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

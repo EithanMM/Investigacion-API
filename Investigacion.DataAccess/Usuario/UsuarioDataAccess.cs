@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace Investigacion.DataAccess {
     public class UsuarioDataAccess : ILecturaDataAccess<UsuarioModel>,
                                      IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO>,
-                                     ISeguridadDataAccess<ActualizarPasswordDTO>{
+                                     ISeguridadDataAccess<ActualizarPasswordDTO, AccesoUsuarioDTO> {
 
         #region Variables y constructor
         private readonly IMapper Mapper;
@@ -78,6 +78,23 @@ namespace Investigacion.DataAccess {
 
         public async Task<bool> CambiarPassword(ActualizarPasswordDTO Modelo) {
             throw new System.NotImplementedException();
+        }
+
+        public async Task<string> AutenticarUsuario(AccesoUsuarioDTO Modelo) {
+
+            using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {
+
+                DataTable Registro = DataSetHelper.AutenticarUsuario(Modelo);
+                var Nodo = new { Usuario = Registro.AsTableValuedParameter("UsuarioUDT") };
+
+                UsuarioModel Resultado = (await DbConexion.QueryAsync<UsuarioModel, RolModel, UsuarioModel>("dbo.[SP_AUTENTICAR_USUARIO]",
+                    map: (um, rm) => {
+                        um.RolModel = rm;
+                        return um;
+                    }, Nodo, splitOn: "IdUsuario,IdRol", commandType: CommandType.StoredProcedure)).FirstOrDefault();
+
+                return Utf8Json.JsonSerializer.ToJsonString(Resultado);
+            }
         }
         #endregion
     }

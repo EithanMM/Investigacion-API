@@ -1,9 +1,11 @@
 ﻿using Investigacion.Model.EntidadBase;
+using System.Text.Json.Serialization;
 
 namespace Investigacion.Model {
     public class UsuarioModel : BaseModel {
 
         #region Constructor
+        public UsuarioModel() { }
         #endregion
 
         #region Atributos
@@ -11,6 +13,9 @@ namespace Investigacion.Model {
         public string Usuario { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
+
+        [JsonIgnore]
+        public RolModel RolModel { get; set; }
         #endregion
     }
 }

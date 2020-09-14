@@ -17,10 +17,10 @@ namespace Investigacion.WebApi.Controllers {
 
         #region Variables y constructor
         private readonly ILecturaCore<UsuarioModel> ILecturaUsuario;
-        private readonly ISeguridadCore<ActualizarPasswordDTO> ISeguridadUsuario;
         private readonly IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> IEscrituraUsuario;
+        private readonly ISeguridadCore<ActualizarPasswordDTO, AccesoUsuarioDTO, RespuestaUsuarioDTO> ISeguridadUsuario;
 
-        public UsuarioController(ILecturaCore<UsuarioModel> UsuarioLectura, ISeguridadCore<ActualizarPasswordDTO> UsuarioSeguridad, IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> UsuarioEscritura) {
+        public UsuarioController(ILecturaCore<UsuarioModel> UsuarioLectura, ISeguridadCore<ActualizarPasswordDTO, AccesoUsuarioDTO, RespuestaUsuarioDTO> UsuarioSeguridad, IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> UsuarioEscritura) {
             this.ILecturaUsuario = UsuarioLectura;
             this.ISeguridadUsuario = UsuarioSeguridad;
             this.IEscrituraUsuario = UsuarioEscritura;
@@ -40,6 +40,20 @@ namespace Investigacion.WebApi.Controllers {
             UsuarioModel Resultado = await IEscrituraUsuario.Agregar(Modelo);
             RespuestaApi<UsuarioModel> Respuesta = new RespuestaApi<UsuarioModel>(Resultado);
             return Created("Ok", Respuesta);
+        }
+
+        /// <summary>
+        /// Autentica si el usuario existe o no.
+        /// </summary>
+        [HttpPost]
+        [ActionName("Autenticar")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<RespuestaUsuarioDTO>))]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public async Task<IActionResult> Autenticar(AccesoUsuarioDTO Modelo) {
+
+            RespuestaUsuarioDTO Respuesta = await ISeguridadUsuario.AutenticarUsuario(Modelo);
+            return Ok(Respuesta);
         }
 
         /// <summary>

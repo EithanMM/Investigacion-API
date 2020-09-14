@@ -3,6 +3,7 @@ using Investigacion.Model;
 using Investigacion.Model.CustomEntities;
 using Investigacion.Model.TipoTrabajo.DTOModels;
 using Investigacion.WebApi.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Net;
@@ -31,6 +32,7 @@ namespace Investigacion.WebApi.Controllers {
         /// Agrega un registro de tipo trabajo 
         /// </summary>
         [HttpPost]
+        [Authorize]
         [ActionName("Agregar")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<TipoTrabajoModel>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
