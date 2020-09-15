@@ -139,7 +139,7 @@ namespace Investigacion.DataAccess.Helper {
             Resultado.Columns.Add("Email", typeof(string));
             Resultado.Columns.Add("Password", typeof(string));
 
-            Resultado.Rows.Add(null, Modelo.Usuario, null, Modelo.Password);
+            Resultado.Rows.Add(null, Modelo.Usuario, null, null);
             return Resultado;
         }
         #endregion

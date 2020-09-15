@@ -3,9 +3,8 @@
 
         #region Constructor
         public AccesoUsuarioDTO() {}
-        public AccesoUsuarioDTO(string Usuario, string Password) {
+        public AccesoUsuarioDTO(string Usuario) {
             this.Usuario = Usuario;
-            this.Password = Password;
         }
         #endregion
         #region Atributos

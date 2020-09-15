@@ -34,8 +34,10 @@ namespace Investigacion.WebApi.Controllers {
         /// </summary>
         [HttpPost]
         [ActionName("Agregar")]
+        [Authorize(Roles = "Administrador, Gestor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<InvestigadorModel>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> Agregar([FromBody] AgregarInvestigadorDTO Modelo) {
 
             InvestigadorModel Resultado = await IEscrituraInvestigador.Agregar(Modelo);
@@ -48,9 +50,11 @@ namespace Investigacion.WebApi.Controllers {
         /// </summary>
         [HttpPatch]
         [ActionName("Actualizar")]
+        [Authorize(Roles = "Administrador, Gestor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<InvestigadorModel>))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> Actualizar([FromBody] ActualizarInvestigadorDTO Modelo) {
 
             InvestigadorModel Resultado = await IEscrituraInvestigador.Actualizar(Modelo);
@@ -63,9 +67,11 @@ namespace Investigacion.WebApi.Controllers {
         /// </summary>
         [HttpGet]
         [ActionName("Obtener")]
+        [Authorize(Roles = "Administrador, Gestor, Invitado")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<InvestigadorModel>))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> Obtener(string Consecutivo) {
 
             InvestigadorModel Resultado = await ILecturaInvestigador.Obtener(Consecutivo);
@@ -78,8 +84,10 @@ namespace Investigacion.WebApi.Controllers {
         /// </summary>
         [HttpGet]
         [ActionName("Listar")]
+        [Authorize(Roles = "Administrador, Gestor, Invitado")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<IEnumerable<InvestigadorModel>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> Listar() {
 
             IEnumerable<InvestigadorModel> Resultado = await ILecturaInvestigador.Listar();
@@ -92,7 +100,9 @@ namespace Investigacion.WebApi.Controllers {
         /// </summary>
         [HttpGet]
         [ActionName("ListarPaginacion")]
+        [Authorize(Roles = "Administrador, Gestor, Invitado")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<Paginacion<InvestigadorModel>>))]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         public async Task<IActionResult> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
 
             var Resultado = await ILecturaInvestigador.ListarPaginacion(NumeroPagina, TamanoPagina);
@@ -107,9 +117,11 @@ namespace Investigacion.WebApi.Controllers {
         /// </summary>
         [HttpDelete]
         [ActionName("Eliminar")]
+        [Authorize(Roles = "Administrador, Gestor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<bool>))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [HttpDelete]
         public async Task<IActionResult> Eliminar(string Consecutivo) {
 

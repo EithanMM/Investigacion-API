@@ -17,6 +17,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
 using System.IO;
@@ -35,9 +36,9 @@ namespace Investigacion.WebApi {
         public void ConfigureServices(IServiceCollection services) {
 
             /****************** SWAGGER JSON PROPERTIES ********************/
-            services.AddMvcCore()
-                .AddJsonOptions(options => { /*Propiedad que omite propiedades del JSON con null. */
-                    options.JsonSerializerOptions.IgnoreNullValues = true;
+            services.AddMvcCore().AddJsonOptions(options => {
+                /*Propiedad que omite propiedades del JSON con null. */
+                options.JsonSerializerOptions.IgnoreNullValues = true;
                 }).AddApiExplorer();
             /*********** DISABLEDING EXPLICIT MODEL VALIDATION ***************/
             services.AddControllers(options => { /* Uso de clase personalizada para excepciones */
@@ -108,12 +109,18 @@ namespace Investigacion.WebApi {
                     ValidateIssuer = true, /* <= aplicacion cliente */
                     ValidateAudience = true,
                     ValidateLifetime = true, /* <= validamos el tiempo de vida del token*/
+                    ClockSkew = TimeSpan.Zero, /*Setea el tiempo que espera el token una vez que expira*/
                     ValidateIssuerSigningKey = true, /* <= valida la firma del emisor*/
                     ValidIssuer = Configuration["Authentication:Issuer"],
                     ValidAudience = Configuration["Authentication:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]))
                 };
             });
+            /****************************************************************/
+
+            /************************ PASSWORD CONFIG ***********************/
+            //Obtenemos la configuracion que existe en el appsettings.json
+            services.Configure<PasswordConfigModel>(Configuration.GetSection("PasswordConfig"));
             /****************************************************************/
 
             /************************ SWAGGER API ****************************/
@@ -125,10 +132,28 @@ namespace Investigacion.WebApi {
                         Version = "v1"
                     });
 
-
                 string FileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 string FilePath = Path.Combine(AppContext.BaseDirectory, FileName);
                 options.IncludeXmlComments(FilePath);
+
+                /*********************** SWAGGER AUTH ****************************/
+                var SecuritySchema = new OpenApiSecurityScheme {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    Reference = new OpenApiReference {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                };
+                options.AddSecurityDefinition("Bearer", SecuritySchema);
+
+                var SecurityRequirement = new OpenApiSecurityRequirement();
+                SecurityRequirement.Add(SecuritySchema, new[] { "Bearer" });
+                options.AddSecurityRequirement(SecurityRequirement);
+                /****************************************************************/
             });
             /****************************************************************/
         }
