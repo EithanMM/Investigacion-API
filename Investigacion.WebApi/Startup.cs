@@ -1,28 +1,12 @@
 using AutoMapper;
-using Investigacion.Core;
-using Investigacion.Core.Excepciones;
-using Investigacion.DataAccess;
-using Investigacion.InterfaceCore;
-using Investigacion.InterfaceDataAccess;
-using Investigacion.Model;
-using Investigacion.Model.Investigador.DTOModels;
-using Investigacion.Model.Rol.DTOModels;
-using Investigacion.Model.TipoTrabajo.DTOModels;
-using Investigacion.Model.Trabajo.DTOModels;
-using Investigacion.Model.Usuario.DTOModels;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Investigacion.WebApi.Extensiones;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using System;
-using System.IO;
-using System.Reflection;
-using System.Text;
 
 namespace Investigacion.WebApi {
     public class Startup {
@@ -36,126 +20,30 @@ namespace Investigacion.WebApi {
         public void ConfigureServices(IServiceCollection services) {
 
             /****************** SWAGGER JSON PROPERTIES ********************/
-            services.AddMvcCore().AddJsonOptions(options => {
-                /*Propiedad que omite propiedades del JSON con null. */
-                options.JsonSerializerOptions.IgnoreNullValues = true;
-                }).AddApiExplorer();
-            /*********** DISABLEDING EXPLICIT MODEL VALIDATION ***************/
-            services.AddControllers(options => { /* Uso de clase personalizada para excepciones */
-                options.Filters.Add<ExcepcionFiltro>();
+            services.AddSwaggerJsonConfiguration(Configuration);
 
-            }).ConfigureApiBehaviorOptions(options => { /* Deshabilita el Model.IsValid */
-                options.SuppressModelStateInvalidFilter = true;
-            });
-            /****************************************************************/
+            /*********** DISABLEDING EXPLICIT MODEL VALIDATION ***************/
+            services.DisableExplicitModelValidation(Configuration);
+
+            /****************** ENABLING CUSTOM CLASSES **********************/
+            services.AddCustomClassConfiguration(Configuration);
 
             /*********************** AUTOMAPPER ****************************/
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            /****************************************************************/
-
-            /******************** CONNECTION STRING *************************/
-            //services.AddDbContext<InvestigacionDBContext>(option =>  // <- Usando DBcontext generado por E.F
-            //option.UseSqlServer(Configuration.GetConnectionString("INVESTIGACION_DB")));
-            /****************************************************************/
 
             /*********************** INJECT DEPENDENCY II ******************************/
-            /*********************** INTERFACE - CORE ***********************************/
-            /**************************** LECTURA ***************************************/
-            services.AddTransient<ILecturaCore<InvestigadorModel>, InvestigadorCore>();
-            services.AddTransient<ILecturaCore<TipoTrabajoModel>, TipoTrabajoCore>();
-            services.AddTransient<ILecturaCore<TrabajoModel>, TrabajoCore>();
-            services.AddTransient<ILecturaCore<UsuarioModel>, UsuarioCore>();
-            services.AddTransient<ILecturaCore<RolModel>, RolCore>();
-            /*************************** ESCRITURA **************************************/
-            services.AddTransient<IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
-            services.AddTransient<IEscrituraCore<TipoTrabajoModel, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoCore>();
-            services.AddTransient<IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoCore>();
-            services.AddTransient<IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioCore>();
-            services.AddTransient<IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
-            /************************** ELIMINACION *************************************/
-            services.AddTransient<IEliminarCore, InvestigadorCore>();
-            services.AddTransient<IEliminarCore, TipoTrabajoCore>();
-            /************************** SEGURIDAD *************************************/
-            services.AddTransient<ISeguridadCore<ActualizarPasswordDTO, AccesoUsuarioDTO, RespuestaUsuarioDTO>, UsuarioCore>();
-            /**************************************************************************/
-
-            /*********************** INTERFACE - DATA ACCESS *****************************/
-            /**************************** LECTURA ***************************************/
-            services.AddTransient<ILecturaDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
-            services.AddTransient<ILecturaDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
-            services.AddTransient<ILecturaDataAccess<TrabajoModel>, TrabajoDataAccess>();
-            services.AddTransient<ILecturaDataAccess<UsuarioModel>, UsuarioDataAccess>();
-            services.AddTransient<ILecturaDataAccess<RolModel>, RolDataAccess>();
-            /*************************** ESCRITURA **************************************/
-            services.AddTransient<IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO>, RolDataAccess>();
-            /************************** ELIMINACION *************************************/
-            services.AddTransient<IEliminarDataAccess, InvestigadorDataAccess>();
-            services.AddTransient<IEliminarDataAccess, TipoTrabajoDataAccess>();
-            /************************** SEGURIDAD *************************************/
-            services.AddTransient<ISeguridadDataAccess<ActualizarPasswordDTO, AccesoUsuarioDTO>, UsuarioDataAccess>();
-            /**************************************************************************/
+            services.AddDependencyInjectionCore(Configuration);
+            services.AddDependencyInjectionDataAccess(Configuration);
 
             /************************ AUTHENTICATION ************************/
-            services.AddAuthentication(options => {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options => {
-                /*Configuramos la validacion que se hace desde el JWT*/
-                options.TokenValidationParameters = new TokenValidationParameters {
-                    ValidateIssuer = true, /* <= aplicacion cliente */
-                    ValidateAudience = true,
-                    ValidateLifetime = true, /* <= validamos el tiempo de vida del token*/
-                    ClockSkew = TimeSpan.Zero, /*Setea el tiempo que espera el token una vez que expira*/
-                    ValidateIssuerSigningKey = true, /* <= valida la firma del emisor*/
-                    ValidIssuer = Configuration["Authentication:Issuer"],
-                    ValidAudience = Configuration["Authentication:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Authentication:SecretKey"]))
-                };
-            });
-            /****************************************************************/
+            services.AddAuthenticationTokenConfiguration(Configuration);
 
             /************************ PASSWORD CONFIG ***********************/
-            //Obtenemos la configuracion que existe en el appsettings.json
-            services.Configure<PasswordConfigModel>(Configuration.GetSection("PasswordConfig"));
-            /****************************************************************/
+            services.AddPasswordConfiguration(Configuration);
 
             /************************ SWAGGER API ****************************/
-            services.AddSwaggerGen(options => {
-                options.SwaggerDoc("v1",
-                    new Microsoft.OpenApi.Models.OpenApiInfo {
-                        Title = "Investigacion API",
-                        Description = "API refinada orientada a microservicios",
-                        Version = "v1"
-                    });
+            services.AddSwaggerConfiguration(Configuration);
 
-                string FileName = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                string FilePath = Path.Combine(AppContext.BaseDirectory, FileName);
-                options.IncludeXmlComments(FilePath);
-
-                /*********************** SWAGGER AUTH ****************************/
-                var SecuritySchema = new OpenApiSecurityScheme {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.Http,
-                    Scheme = "bearer",
-                    Reference = new OpenApiReference {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                };
-                options.AddSecurityDefinition("Bearer", SecuritySchema);
-
-                var SecurityRequirement = new OpenApiSecurityRequirement();
-                SecurityRequirement.Add(SecuritySchema, new[] { "Bearer" });
-                options.AddSecurityRequirement(SecurityRequirement);
-                /****************************************************************/
-            });
-            /****************************************************************/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
