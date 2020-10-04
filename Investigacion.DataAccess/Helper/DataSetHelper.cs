@@ -1,4 +1,6 @@
-﻿using Investigacion.Model.Investigador.DTOModels;
+﻿using Investigacion.Model.Especialidad.DTOModels;
+using Investigacion.Model.InformacionInvestigador.DTOModels;
+using Investigacion.Model.Investigador.DTOModels;
 using Investigacion.Model.Rol.DTOModels;
 using Investigacion.Model.TipoTrabajo.DTOModels;
 using Investigacion.Model.Trabajo.DTOModels;
@@ -83,6 +85,36 @@ namespace Investigacion.DataAccess.Helper {
             return Resultado;
 
         }
+
+        /// <summary>
+        /// Metodo Helper para ingresar un registro de especialidad
+        /// </summary>
+        public static DataTable AgregarEspecialidadUDT(AgregarEspecialidadDTO Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("Consecutivo", typeof(System.Guid));
+            Resultado.Columns.Add("Descripcion", typeof(string));
+
+            Resultado.Rows.Add(null, Modelo.Descripcion);
+            return Resultado;
+        }
+
+        /// <summary>
+        ///  Metodo Helper para ingresar un registro de informacion investigador
+        /// </summary>
+        public static DataTable AgregarInformacionInvestigadorUDT(AgregarInformacionInvestigadorDTO Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("LLF_IdInvestigador", typeof(System.Guid));
+            Resultado.Columns.Add("LLF_IdEsepcialidad", typeof(System.Guid));
+            Resultado.Columns.Add("Consecutivo", typeof(System.Guid));
+            Resultado.Columns.Add("Email", typeof(string));
+            Resultado.Columns.Add("Direccion", typeof(string));
+            Resultado.Columns.Add("Pais", typeof(string));
+
+            Resultado.Rows.Add(Modelo.IdInvestigador, Modelo.IdEspecialidad, null, Modelo.Email, Modelo.Direccion, Modelo.Pais);
+            return Resultado;
+        }
         #endregion
 
         #region Metodos Actualizar UDT
@@ -128,9 +160,84 @@ namespace Investigacion.DataAccess.Helper {
             Resultado.Rows.Add(Modelo.Consecutivo, Modelo.Descripcion);
             return Resultado;
         }
+
+        /// <summary>
+        /// Metodo Helper para actualizar un registro de rol
+        /// </summary>
+        public static DataTable ActualizarRolUDT(ActualizarRolDTO Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("Consecutivo", typeof(System.Guid));
+            Resultado.Columns.Add("Descripcion", typeof(string));
+
+            Resultado.Rows.Add(Modelo.Consecutivo, Modelo.Descripcion);
+            return Resultado;
+        }
+
+        /// <summary>
+        /// Metodo Helper para actualizar un registro de usuario
+        /// </summary>
+        public static DataTable ActualizarUsuarioUDT(ActualizarUsuarioDTO Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("Consecutivo", typeof(System.Guid));
+            Resultado.Columns.Add("Usuario", typeof(string));
+            Resultado.Columns.Add("Email", typeof(string));
+
+            Resultado.Rows.Add(Modelo.Consecutivo, Modelo.Usuario, Modelo.Email);
+            return Resultado;
+        }
+
+        /// <summary>
+        /// Metodo Helper para actualizar el password de un registro de usuario
+        /// </summary>
+        public static DataTable ActualizarPasswordUsuarioUDT(ActualizarPasswordDTO Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("Consecutivo", typeof(System.Guid));
+            Resultado.Columns.Add("Usuario", typeof(string));
+            Resultado.Columns.Add("Email", typeof(string));
+            Resultado.Columns.Add("Password", typeof(string));
+
+            Resultado.Rows.Add(null, Modelo.Usuario, Modelo.Email, Modelo.Password);
+            return Resultado;
+        }
+
+        /// <summary>
+        /// Metodo Helper para actualizar un registro de especialidad
+        /// </summary>
+        public static DataTable ActualizarEspecialidadUDT(ActualizarEspecialidadDTO Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("Consecutivo", typeof(System.Guid));
+            Resultado.Columns.Add("Descripcion", typeof(string));
+
+            Resultado.Rows.Add(Modelo.Consecutivo, Modelo.Consecutivo);
+            return Resultado;
+        }
+
+        /// <summary>
+        /// Metodo Helper para actualizar un registro de informacion investigador
+        /// </summary>
+        public static DataTable ActualizarInformacionInvestigadorUDT(ActualizarInformacionInvestigadorDTO Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("LLF_IdInvestigador", typeof(System.Guid));
+            Resultado.Columns.Add("LLF_IdEsepcialidad", typeof(System.Guid));
+            Resultado.Columns.Add("Consecutivo", typeof(System.Guid));
+            Resultado.Columns.Add("Email", typeof(string));
+            Resultado.Columns.Add("Direccion", typeof(string));
+            Resultado.Columns.Add("Pais", typeof(string));
+
+            Resultado.Rows.Add(Modelo.IdInvestigador, Modelo.IdEspecialidad, Modelo.Consecutivo, Modelo.Email, Modelo.Direccion, Modelo.Pais);
+            return Resultado;
+        }
         #endregion
 
         #region Metodos Extras UDT
+        /// <summary>
+        /// Metodo utilizado para la autenticacion de un usuario en concreto
+        /// </summary>
         public static DataTable AutenticarUsuario(AccesoUsuarioDTO Modelo) {
 
             DataTable Resultado = new DataTable();

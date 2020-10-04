@@ -83,7 +83,6 @@ namespace Investigacion.Core {
             if (Respuesta == null) throw new NotFoundExcepcionCore("El investigador con consecutivo " + Consecutivo + " no existe");
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
-
         }
 
         public async Task<bool> Eliminar(string Consecutivo) {

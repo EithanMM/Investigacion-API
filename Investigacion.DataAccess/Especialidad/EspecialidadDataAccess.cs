@@ -3,58 +3,57 @@ using Dapper;
 using Investigacion.DataAccess.Helper;
 using Investigacion.InterfaceDataAccess;
 using Investigacion.Model;
-using Investigacion.Model.Rol.DTOModels;
+using Investigacion.Model.Especialidad.DTOModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Investigacion.DataAccess {
-    public class RolDataAccess : ILecturaDataAccess<RolModel>,
-                                 IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO> {
+    public class EspecialidadDataAccess : ILecturaDataAccess<EspecialidadModel>,
+                                          IEscrituraDataAccess<AgregarEspecialidadDTO, ActualizarEspecialidadDTO> {
 
-
-        #region Variables y constructor
+        #region Variables y Constructor
         private readonly IMapper Mapper;
         private string ConnectionString = "";
         private readonly IConfiguration Configuration;
 
-        public RolDataAccess(IMapper Mapper, IConfiguration Configuration) {
+        public EspecialidadDataAccess(IMapper Mapper, IConfiguration Configuration) {
             this.Mapper = Mapper;
             ConnectionString = Configuration.GetConnectionString("INVESTIGACION_DB");
         }
         #endregion
 
-
         #region Metodos
-        public async Task<string> Agregar(AgregarRolDTO ModeloDTO) {
+        public async Task<string> Agregar(AgregarEspecialidadDTO ModeloDTO) {
 
             using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {
 
-                DataTable Registro = DataSetHelper.AgregarRolUDT(ModeloDTO);
-                var Nodo = new { Rol = Registro.AsTableValuedParameter("RolUDT") };
-                dynamic Resultado = (await DbConexion.QueryAsync("dbo.[SP_AGREGAR_ROL]", Nodo, commandType: CommandType.StoredProcedure)).FirstOrDefault();
+                DataTable Registro = DataSetHelper.AgregarEspecialidadUDT(ModeloDTO);
+                var Nodo = new { @Especialidad = Registro.AsTableValuedParameter("EspecialidadUDT") };
+                dynamic Resultado = (await DbConexion.QueryAsync("dbo.[SP_AGREGAR_ESPECIALIDAD]", Nodo, commandType: CommandType.StoredProcedure)).FirstOrDefault();
 
                 if (!DataHelper.VerificarAtributo(Resultado, "Error")) {
-                    RolModel RespuestaDTO = Mapper.Map<RolModel>(Resultado);
+                    EspecialidadModel RespuestaDTO = Mapper.Map<EspecialidadModel>(Resultado);
                     return Utf8Json.JsonSerializer.ToJsonString(RespuestaDTO);
                 }
                 else return "Error:" + Resultado.Error;
             }
         }
 
-        public async Task<string> Actualizar(ActualizarRolDTO ModeloDTO) {
+        public async Task<string> Actualizar(ActualizarEspecialidadDTO ModeloDTO) {
 
             using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {
 
-                DataTable Registro = DataSetHelper.ActualizarRolUDT(ModeloDTO);
-                var Nodo = new { Rol = Registro.AsTableValuedParameter("RolUDT") };
-                dynamic Resultado = (await DbConexion.QueryAsync("dbo.[SP_ACTUALIZAR_ROL]", Nodo, commandType: CommandType.StoredProcedure)).FirstOrDefault();
+                DataTable Registro = DataSetHelper.ActualizarEspecialidadUDT(ModeloDTO);
+                var Nodo = new { @Especialidad = Registro.AsTableValuedParameter("EspecialidadUDT") };
+                dynamic Resultado = (await DbConexion.QueryAsync("dbo.[SP_ACTUALIZAR_ESPECIALIDAD]", Nodo, commandType: CommandType.StoredProcedure)).FirstOrDefault();
 
                 if (!DataHelper.VerificarAtributo(Resultado, "Error")) {
-                    RolModel RespuestaDTO = Mapper.Map<RolModel>(Resultado);
+                    EspecialidadModel RespuestaDTO = Mapper.Map<EspecialidadModel>(Resultado);
                     return Utf8Json.JsonSerializer.ToJsonString(RespuestaDTO);
                 }
                 else return "Error:" + Resultado.Error;
@@ -67,7 +66,7 @@ namespace Investigacion.DataAccess {
 
                 var dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("Consecutivo", Consecutivo);
-                RolModel Resultado = (await DbConexion.QueryAsync<RolModel>("dbo.[SP_OBTENER_ROL]", param: dynamicParameters, commandType: CommandType.StoredProcedure)).FirstOrDefault();
+                EspecialidadModel Resultado = (await DbConexion.QueryAsync<EspecialidadModel>("dbo.[SP_OBTENER_ESPECIALIDAD]", param: dynamicParameters, commandType: CommandType.StoredProcedure)).FirstOrDefault();
                 return Resultado != null ? Utf8Json.JsonSerializer.ToJsonString(Resultado) : "";
             }
         }
@@ -75,7 +74,7 @@ namespace Investigacion.DataAccess {
         public async Task<string> Listar() {
 
             using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {
-                IEnumerable<RolModel> Resultado = await DbConexion.QueryAsync<RolModel>("dbo.[SP_OBTENER_TODOS_ROL]", commandType: CommandType.StoredProcedure);
+                IEnumerable<EspecialidadModel> Resultado = await DbConexion.QueryAsync<EspecialidadModel>("dbo.[SP_OBTENER_TODOS_ESPECIALIDAD]", commandType: CommandType.StoredProcedure);
                 return Utf8Json.JsonSerializer.ToJsonString(Resultado);
             }
         }
@@ -89,12 +88,11 @@ namespace Investigacion.DataAccess {
                 dynamicParameters.Add("TamanoPagina", TamanoPagina);
                 dynamicParameters.Add("Total", null, DbType.Int32, direction: ParameterDirection.Output); //Nos permite leer el resultado.
 
-                var Resultado = await DbConexion.QueryMultipleAsync("dbo.[SP_OBTENER_TODOS_ROL_PAGINACION]", param: dynamicParameters, commandType: CommandType.StoredProcedure);
-                EntidadPaginacion<RolModel> Respuesta = new EntidadPaginacion<RolModel>(await Resultado.ReadAsync<RolModel>(), dynamicParameters.Get<int>("@Total"));
+                var Resultado = await DbConexion.QueryMultipleAsync("dbo.[SP_OBTENER_TODOS_ESPECIALIDAD_PAGINACION]", param: dynamicParameters, commandType: CommandType.StoredProcedure);
+                EntidadPaginacion<EspecialidadModel> Respuesta = new EntidadPaginacion<EspecialidadModel>(await Resultado.ReadAsync<EspecialidadModel>(), dynamicParameters.Get<int>("@Total"));
                 return Utf8Json.JsonSerializer.ToJsonString(Respuesta);
             }
         }
         #endregion
-
     }
 }

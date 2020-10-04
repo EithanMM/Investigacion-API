@@ -71,7 +71,7 @@ namespace Investigacion.DataAccess {
                         tt.TipoTrabajoModel = ttt;
                         return tt;
 
-                    }, splitOn: "IdInvestigador, IdTipoTrabajo",
+                    }, splitOn: "IdTrabajo, IdInvestigador, IdTipoTrabajo",
                     commandType: CommandType.StoredProcedure);
                 return Utf8Json.JsonSerializer.ToJsonString(Resultado);
             }

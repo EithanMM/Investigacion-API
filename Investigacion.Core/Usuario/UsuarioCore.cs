@@ -57,6 +57,8 @@ namespace Investigacion.Core {
                 string Resultado = await IEscrituraUsuario.Agregar(Modelo);
                 Respuesta = Utf8Json.JsonSerializer.Deserialize<UsuarioModel>(Resultado);
                 if (Respuesta == null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
+
+                //Generar un RefreshToken, guardarlo en BD
             }
             else throw new ExcepcionCore("Ya existe un usuario con las credenciales brindadas.");
 

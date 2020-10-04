@@ -4,6 +4,8 @@ using Investigacion.DataAccess;
 using Investigacion.InterfaceCore;
 using Investigacion.InterfaceDataAccess;
 using Investigacion.Model;
+using Investigacion.Model.Especialidad.DTOModels;
+using Investigacion.Model.InformacionInvestigador.DTOModels;
 using Investigacion.Model.Investigador.DTOModels;
 using Investigacion.Model.Rol.DTOModels;
 using Investigacion.Model.TipoTrabajo.DTOModels;
@@ -40,6 +42,8 @@ namespace Investigacion.WebApi.Extensiones {
             services.AddTransient<ILecturaCore<TrabajoModel>, TrabajoCore>();
             services.AddTransient<ILecturaCore<UsuarioModel>, UsuarioCore>();
             services.AddTransient<ILecturaCore<RolModel>, RolCore>();
+            services.AddTransient<ILecturaCore<EspecialidadModel>, EspecialidadCore>();
+            services.AddTransient<ILecturaCore<InformacionInvestigadorModel>, InformacionInvestigadorCore>();
 
             /*************************** ESCRITURA **************************************/
             services.AddTransient<IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
@@ -47,6 +51,8 @@ namespace Investigacion.WebApi.Extensiones {
             services.AddTransient<IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoCore>();
             services.AddTransient<IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioCore>();
             services.AddTransient<IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
+            services.AddTransient<IEscrituraCore<EspecialidadModel, AgregarEspecialidadDTO, ActualizarEspecialidadDTO>, EspecialidadCore>();
+            services.AddTransient<IEscrituraCore<InformacionInvestigadorModel, AgregarInformacionInvestigadorDTO, ActualizarInformacionInvestigadorDTO>, InformacionInvestigadorCore>();
 
             /************************** ELIMINACION *************************************/
             services.AddTransient<IEliminarCore, InvestigadorCore>();
@@ -67,6 +73,8 @@ namespace Investigacion.WebApi.Extensiones {
             services.AddTransient<ILecturaDataAccess<TrabajoModel>, TrabajoDataAccess>();
             services.AddTransient<ILecturaDataAccess<UsuarioModel>, UsuarioDataAccess>();
             services.AddTransient<ILecturaDataAccess<RolModel>, RolDataAccess>();
+            services.AddTransient<ILecturaDataAccess<EspecialidadModel>, EspecialidadDataAccess>();
+            services.AddTransient<ILecturaDataAccess<InformacionInvestigadorModel>, InformacionInvestigadorDataAccess>();
 
             /*************************** ESCRITURA **************************************/
             services.AddTransient<IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorDataAccess>();
@@ -74,6 +82,8 @@ namespace Investigacion.WebApi.Extensiones {
             services.AddTransient<IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO>, RolDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarEspecialidadDTO, ActualizarEspecialidadDTO>, EspecialidadDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarInformacionInvestigadorDTO, ActualizarInformacionInvestigadorDTO>, InformacionInvestigadorDataAccess>();
 
             /************************** ELIMINACION *************************************/
             services.AddTransient<IEliminarDataAccess, InvestigadorDataAccess>();

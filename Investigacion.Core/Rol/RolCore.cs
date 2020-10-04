@@ -25,10 +25,6 @@ namespace Investigacion.Core {
         #endregion
 
         #region Metodos
-        public Task<RolModel> Actualizar(ActualizarRolDTO Modelo) {
-            throw new System.NotImplementedException();
-        }
-
         public async Task<RolModel> Agregar(AgregarRolDTO Modelo) {
 
             RolModel Respuesta;
@@ -40,16 +36,47 @@ namespace Investigacion.Core {
             return Respuesta;
         }
 
-        public Task<IEnumerable<RolModel>> Listar() {
-            throw new System.NotImplementedException();
+        public async Task<RolModel> Actualizar(ActualizarRolDTO Modelo) {
+
+            RolModel Respuesta;
+
+            if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
+            string Resultado = await IEscrituraRol.Actualizar(Modelo);
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RolModel>(Resultado);
+            if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
+            return Respuesta;
         }
 
-        public Task<Paginacion<RolModel>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
-            throw new System.NotImplementedException();
+        public async Task<IEnumerable<RolModel>> Listar() {
+
+            var Respuesta = await ILecturaRol.Listar();
+            if (Respuesta == null) throw new ExcepcionCore("Modelo nulo");
+            IEnumerable<RolModel> Resultado = Utf8Json.JsonSerializer.Deserialize<IEnumerable<RolModel>>(Respuesta);
+            return Resultado;
         }
 
-        public Task<RolModel> Obtener(string Consecutivo) {
-            throw new System.NotImplementedException();
+        public async Task<Paginacion<RolModel>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+
+            NumeroPagina = ((int)NumeroPagina > 0) ? NumeroPagina : PaginaDefault;
+            TamanoPagina = ((int)TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; 
+            NumeroPagina = ((int)NumeroPagina - 1);
+
+            var Respuesta = await ILecturaRol.ListarPaginacion((int)NumeroPagina * (int)TamanoPagina, (int)TamanoPagina);
+            EntidadPaginacion<RolModel> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<RolModel>>(Respuesta);
+            var RespuestaPaginada = Paginacion<RolModel>.PaginarSQL(Objeto.Data, (int)NumeroPagina, (int)TamanoPagina, Objeto.Total);
+            return RespuestaPaginada;
+        }
+
+        public async Task<RolModel> Obtener(string Consecutivo) {
+
+            RolModel Respuesta;
+
+            if (Consecutivo.Equals("")) throw new ExcepcionCore("No introdujo el consecutivo.");
+            string Resultado = await ILecturaRol.Obtener(Consecutivo);
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RolModel>(Resultado);
+            if (Respuesta == null) throw new NotFoundExcepcionCore("El Rol con consecutivo " + Consecutivo + " no existe");
+            if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
+            return Respuesta;
         }
         #endregion
     }
