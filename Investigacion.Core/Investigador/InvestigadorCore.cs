@@ -21,7 +21,6 @@ namespace Investigacion.Core {
         private readonly IEliminarDataAccess IEliminarInvestigador;
         private readonly IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO> IEscrituraInestigador;
 
-
         public InvestigadorCore(ILecturaDataAccess<InvestigadorModel> ILecturanvestigador, IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO> IEscrituraInestigador, IEliminarDataAccess IEliminarInvestigador) {
             this.ILecturanvestigador = ILecturanvestigador;
             this.IEscrituraInestigador = IEscrituraInestigador;

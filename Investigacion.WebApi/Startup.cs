@@ -19,6 +19,8 @@ namespace Investigacion.WebApi {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
 
+            /******************** SESSION STORAGE **************************/
+            services.AddSessionConfiguration(Configuration);
             /****************** SWAGGER JSON PROPERTIES ********************/
             services.AddSwaggerJsonConfiguration(Configuration);
 
@@ -55,6 +57,9 @@ namespace Investigacion.WebApi {
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            //Add User session
+            app.UseSession();
 
             app.UseAuthentication();
 

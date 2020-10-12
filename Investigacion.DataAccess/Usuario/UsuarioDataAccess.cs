@@ -45,7 +45,22 @@ namespace Investigacion.DataAccess {
         }
 
         public async Task<string> Obtener(string Consecutivo) {
-            throw new System.NotImplementedException();
+
+            using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {
+
+                var dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("Consecutivo", Consecutivo);
+                UsuarioModel Resultado = (await DbConexion.QueryAsync<UsuarioModel, RolModel, UsuarioModel>("dbo.[SP_OBTENER_USUARIO]",
+                    param: dynamicParameters,
+                    map: (um, rm) => {
+                        um.RolModel = rm;
+                        return um;
+
+                    }, splitOn: "IdUsuario, IdRol",
+                    commandType: CommandType.StoredProcedure)).FirstOrDefault();
+
+                return Utf8Json.JsonSerializer.ToJsonString(Resultado);
+            }
         }
 
         public async Task<string> Actualizar(ActualizarUsuarioDTO ModeloDTO) {

@@ -37,20 +37,20 @@ namespace Investigacion.WebApi.Extensiones {
         public static void AddDependencyInjectionCore(this IServiceCollection services, IConfiguration configuration) {
 
             /**************************** LECTURA ***************************************/
-            services.AddTransient<ILecturaCore<InvestigadorModel>, InvestigadorCore>();
-            services.AddTransient<ILecturaCore<TipoTrabajoModel>, TipoTrabajoCore>();
+            services.AddTransient<ILecturaCore<RolModel>, RolCore>();
             services.AddTransient<ILecturaCore<TrabajoModel>, TrabajoCore>();
             services.AddTransient<ILecturaCore<UsuarioModel>, UsuarioCore>();
-            services.AddTransient<ILecturaCore<RolModel>, RolCore>();
+            services.AddTransient<ILecturaCore<TipoTrabajoModel>, TipoTrabajoCore>();
+            services.AddTransient<ILecturaCore<InvestigadorModel>, InvestigadorCore>();
             services.AddTransient<ILecturaCore<EspecialidadModel>, EspecialidadCore>();
             services.AddTransient<ILecturaCore<InformacionInvestigadorModel>, InformacionInvestigadorCore>();
 
             /*************************** ESCRITURA **************************************/
-            services.AddTransient<IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
-            services.AddTransient<IEscrituraCore<TipoTrabajoModel, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoCore>();
+            services.AddTransient<IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
             services.AddTransient<IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoCore>();
             services.AddTransient<IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioCore>();
-            services.AddTransient<IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
+            services.AddTransient<IEscrituraCore<TipoTrabajoModel, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoCore>();
+            services.AddTransient<IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
             services.AddTransient<IEscrituraCore<EspecialidadModel, AgregarEspecialidadDTO, ActualizarEspecialidadDTO>, EspecialidadCore>();
             services.AddTransient<IEscrituraCore<InformacionInvestigadorModel, AgregarInformacionInvestigadorDTO, ActualizarInformacionInvestigadorDTO>, InformacionInvestigadorCore>();
 
@@ -60,6 +60,9 @@ namespace Investigacion.WebApi.Extensiones {
 
             /************************** SEGURIDAD *************************************/
             services.AddTransient<ISeguridadCore<ActualizarPasswordDTO, AccesoUsuarioDTO, RespuestaUsuarioDTO>, UsuarioCore>();
+
+            /*************************** TOKEN ****************************************/
+            services.AddTransient<ITokenCore<UsuarioModel, RefreshTokenModel>, RefreshTokenCore>();
         }
 
         /// <summary>
@@ -68,21 +71,21 @@ namespace Investigacion.WebApi.Extensiones {
         public static void AddDependencyInjectionDataAccess(this IServiceCollection services, IConfiguration configuration) {
 
             /**************************** LECTURA ***************************************/
-            services.AddTransient<ILecturaDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
-            services.AddTransient<ILecturaDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
+            services.AddTransient<ILecturaDataAccess<RolModel>, RolDataAccess>();
             services.AddTransient<ILecturaDataAccess<TrabajoModel>, TrabajoDataAccess>();
             services.AddTransient<ILecturaDataAccess<UsuarioModel>, UsuarioDataAccess>();
-            services.AddTransient<ILecturaDataAccess<RolModel>, RolDataAccess>();
+            services.AddTransient<ILecturaDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
             services.AddTransient<ILecturaDataAccess<EspecialidadModel>, EspecialidadDataAccess>();
+            services.AddTransient<ILecturaDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
             services.AddTransient<ILecturaDataAccess<InformacionInvestigadorModel>, InformacionInvestigadorDataAccess>();
 
             /*************************** ESCRITURA **************************************/
-            services.AddTransient<IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO>, RolDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO>, RolDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarEspecialidadDTO, ActualizarEspecialidadDTO>, EspecialidadDataAccess>();
+            services.AddTransient<IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorDataAccess>();
             services.AddTransient<IEscrituraDataAccess<AgregarInformacionInvestigadorDTO, ActualizarInformacionInvestigadorDTO>, InformacionInvestigadorDataAccess>();
 
             /************************** ELIMINACION *************************************/
@@ -91,6 +94,9 @@ namespace Investigacion.WebApi.Extensiones {
 
             /************************** SEGURIDAD *************************************/
             services.AddTransient<ISeguridadDataAccess<ActualizarPasswordDTO, AccesoUsuarioDTO>, UsuarioDataAccess>();
+
+            /*************************** TOKEN ****************************************/
+            services.AddTransient<ITokenDataAccess<RefreshTokenModel>, RefreshTokenDataAccess>();
         }
 
         /// <summary>
@@ -100,6 +106,14 @@ namespace Investigacion.WebApi.Extensiones {
             services.AddMvcCore().AddJsonOptions(options => {
                 options.JsonSerializerOptions.IgnoreNullValues = true; /*Propiedad que omite propiedades del JSON con null. */
             }).AddApiExplorer();
+        }
+
+        /// <summary>
+        /// Configuracion para permitir el uso de Session.
+        /// </summary>
+        public static void AddSessionConfiguration(this IServiceCollection services, IConfiguration configuration) {
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using Investigacion.Model.Especialidad.DTOModels;
+﻿using Investigacion.Model;
+using Investigacion.Model.Especialidad.DTOModels;
 using Investigacion.Model.InformacionInvestigador.DTOModels;
 using Investigacion.Model.Investigador.DTOModels;
 using Investigacion.Model.Rol.DTOModels;
@@ -113,6 +114,35 @@ namespace Investigacion.DataAccess.Helper {
             Resultado.Columns.Add("Pais", typeof(string));
 
             Resultado.Rows.Add(Modelo.IdInvestigador, Modelo.IdEspecialidad, null, Modelo.Email, Modelo.Direccion, Modelo.Pais);
+            return Resultado;
+        }
+
+        /// <summary>
+        ///  Metodo Helper para ingresar un registro de refresh token
+        /// </summary>
+        public static DataTable AgregarRefreshTokenUDT(RefreshTokenModel Modelo) {
+
+            DataTable Resultado = new DataTable();
+            Resultado.Columns.Add("LLP_Id", typeof(System.Guid));
+            Resultado.Columns.Add("LLF_Usuario", typeof(System.Guid));
+            Resultado.Columns.Add("NumeroRegistro", typeof(int));
+            Resultado.Columns.Add("FechaExpiracion", typeof(DateTime));
+            Resultado.Columns.Add("TokenExpirado", typeof(bool));
+            Resultado.Columns.Add("FechaCreacion", typeof(DateTime));
+            Resultado.Columns.Add("Revocado", typeof(DateTime));
+            Resultado.Columns.Add("TokenActivo", typeof(bool));
+            Resultado.Columns.Add("Token", typeof(string));
+
+            Resultado.Rows.Add(
+                                null,
+                                Modelo.IdUsuario,
+                                null,
+                                Modelo.FechaExpiracion,
+                                Modelo.TokenExpirado,
+                                Modelo.FechaCreacion,
+                                null,
+                                Modelo.TokenActivo,
+                                Modelo.Token);
             return Resultado;
         }
         #endregion

@@ -3,9 +3,12 @@ using Investigacion.Model;
 using Investigacion.Model.CustomEntities;
 using Investigacion.Model.Usuario.DTOModels;
 using Investigacion.WebApi.Helpers;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace Investigacion.WebApi.Controllers {
@@ -19,8 +22,10 @@ namespace Investigacion.WebApi.Controllers {
         private readonly ILecturaCore<UsuarioModel> ILecturaUsuario;
         private readonly IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> IEscrituraUsuario;
         private readonly ISeguridadCore<ActualizarPasswordDTO, AccesoUsuarioDTO, RespuestaUsuarioDTO> ISeguridadUsuario;
+        private readonly ITokenCore<UsuarioModel, RefreshTokenModel> IToken;
 
-        public UsuarioController(ILecturaCore<UsuarioModel> UsuarioLectura, ISeguridadCore<ActualizarPasswordDTO, AccesoUsuarioDTO, RespuestaUsuarioDTO> UsuarioSeguridad, IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> UsuarioEscritura) {
+        public UsuarioController(ILecturaCore<UsuarioModel> UsuarioLectura, ISeguridadCore<ActualizarPasswordDTO, AccesoUsuarioDTO, RespuestaUsuarioDTO> UsuarioSeguridad, IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO> UsuarioEscritura, ITokenCore<UsuarioModel, RefreshTokenModel> IToken) {
+            this.IToken = IToken;
             this.ILecturaUsuario = UsuarioLectura;
             this.ISeguridadUsuario = UsuarioSeguridad;
             this.IEscrituraUsuario = UsuarioEscritura;
@@ -53,7 +58,33 @@ namespace Investigacion.WebApi.Controllers {
         public async Task<IActionResult> Autenticar(AccesoUsuarioDTO Modelo) {
 
             RespuestaUsuarioDTO Respuesta = await ISeguridadUsuario.AutenticarUsuario(Modelo);
+            HttpContext.Session.SetString("JWToken", Respuesta.Token);
             return Ok(Respuesta);
+        }
+
+        /// <summary>
+        /// Meotod para obtener un nuevo token
+        /// </summary>
+        [HttpGet]
+        [ActionName("Refrescar token")]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<string>))]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public IActionResult ObtenerToken() {
+
+            int ErrorCode = (int)HttpStatusCode.BadRequest;
+            string JWToken = HttpContext.Session.GetString("JWToken");
+            if (!string.IsNullOrEmpty(JWToken)) {
+                var Decode = IToken.DecodificarToken(JWToken);
+                string Fecha = IToken.ObtenerFechaToken(Decode);
+                bool TokenExpirado = IToken.CompararFechas(Convert.ToDateTime(Fecha));
+
+                if (TokenExpirado) {
+                    string Token = IToken.GenerarToken(Decode);
+                    return Ok(Token);
+                }
+                else return BadRequest(new { state = ErrorCode, error = "No hay token nuevo, el token actual sigue funcional." });
+            }
+            else return BadRequest(new { state = ErrorCode, error = "No existe usuario logeado en este momento." });
         }
 
         /// <summary>
