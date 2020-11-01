@@ -12,12 +12,14 @@ using Investigacion.Model.TipoTrabajo.DTOModels;
 using Investigacion.Model.Trabajo.DTOModels;
 using Investigacion.Model.Usuario.DTOModels;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 
@@ -37,22 +39,22 @@ namespace Investigacion.WebApi.Extensiones {
         public static void AddDependencyInjectionCore(this IServiceCollection services, IConfiguration configuration) {
 
             /**************************** LECTURA ***************************************/
-            services.AddTransient<ILecturaCore<RolModel>, RolCore>();
+            services.AddTransient<ILecturaCore<RespuestaRolDTO>, RolCore>();
             services.AddTransient<ILecturaCore<TrabajoModel>, TrabajoCore>();
             services.AddTransient<ILecturaCore<UsuarioModel>, UsuarioCore>();
-            services.AddTransient<ILecturaCore<TipoTrabajoModel>, TipoTrabajoCore>();
-            services.AddTransient<ILecturaCore<InvestigadorModel>, InvestigadorCore>();
-            services.AddTransient<ILecturaCore<EspecialidadModel>, EspecialidadCore>();
-            services.AddTransient<ILecturaCore<InformacionInvestigadorModel>, InformacionInvestigadorCore>();
+            services.AddTransient<ILecturaCore<RespuestaTipoTrabajoDTO>, TipoTrabajoCore>();
+            services.AddTransient<ILecturaCore<RespuestaInvestigadorDTO>, InvestigadorCore>();
+            services.AddTransient<ILecturaCore<RespuestaEspecialidadDTO>, EspecialidadCore>();
+            services.AddTransient<ILecturaCore<RespuestaInformacionInvestigadorDTO>, InformacionInvestigadorCore>();
 
             /*************************** ESCRITURA **************************************/
-            services.AddTransient<IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
+            services.AddTransient<IEscrituraCore<RespuestaRolDTO, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
             services.AddTransient<IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoCore>();
             services.AddTransient<IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioCore>();
-            services.AddTransient<IEscrituraCore<TipoTrabajoModel, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoCore>();
-            services.AddTransient<IEscrituraCore<InvestigadorModel, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
-            services.AddTransient<IEscrituraCore<EspecialidadModel, AgregarEspecialidadDTO, ActualizarEspecialidadDTO>, EspecialidadCore>();
-            services.AddTransient<IEscrituraCore<InformacionInvestigadorModel, AgregarInformacionInvestigadorDTO, ActualizarInformacionInvestigadorDTO>, InformacionInvestigadorCore>();
+            services.AddTransient<IEscrituraCore<RespuestaTipoTrabajoDTO, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoCore>();
+            services.AddTransient<IEscrituraCore<RespuestaInvestigadorDTO, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
+            services.AddTransient<IEscrituraCore<RespuestaEspecialidadDTO, AgregarEspecialidadDTO, ActualizarEspecialidadDTO>, EspecialidadCore>();
+            services.AddTransient<IEscrituraCore<RespuestaInformacionInvestigadorDTO, AgregarInformacionInvestigadorDTO, ActualizarInformacionInvestigadorDTO>, InformacionInvestigadorCore>();
 
             /************************** ELIMINACION *************************************/
             services.AddTransient<IEliminarCore, InvestigadorCore>();
@@ -131,6 +133,28 @@ namespace Investigacion.WebApi.Extensiones {
         public static void AddCustomClassConfiguration(this IServiceCollection services, IConfiguration configuration) {
             services.AddControllers(options => { /* Uso de clase personalizada para excepciones */
                 options.Filters.Add<ExcepcionFiltro>();
+            });
+        }
+
+        /// <summary>
+        /// Configuracion para impementacion de HATEOAS
+        /// </summary>
+        public static void HATEOASConfiguration(this IServiceCollection services, IConfiguration configuration) {
+            services.AddHATEOAS(options => {
+                options.AddLink<RespuestaInvestigadorDTO>("Obtener registro",
+                    "Obtener",
+                    HttpMethod.Get,
+                    (x) => new { Consecutivo = x.Consecutivo });
+
+                options.AddLink<RespuestaInvestigadorDTO>("Modificar registro",
+                    "Actualizar",
+                    HttpMethod.Patch,
+                    (x) => new { Consecutivo = x.Consecutivo });
+
+                options.AddLink<RespuestaInvestigadorDTO>("Eliminar registro",
+                    "Eliminar",
+                    HttpMethod.Delete,
+                    (x) => new { Consecutivo = x.Consecutivo });
             });
         }
 

@@ -5,10 +5,6 @@ namespace Investigacion.Model {
 
         #region Constructor
         public TipoTrabajoModel() { }
-
-        public TipoTrabajoModel(string Error) {
-            this.Error = Error;
-        }
         #endregion
 
         #region Atributos

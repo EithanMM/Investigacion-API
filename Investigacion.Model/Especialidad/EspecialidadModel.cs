@@ -8,9 +8,6 @@ namespace Investigacion.Model {
 
         #region Constructor
         public EspecialidadModel() { }
-        public EspecialidadModel(string Error) {
-            this.Error = Error;
-        }
         #endregion
 
         #region Atributos

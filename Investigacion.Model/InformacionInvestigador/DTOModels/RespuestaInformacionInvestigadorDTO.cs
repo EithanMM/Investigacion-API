@@ -1,13 +1,15 @@
-﻿using Investigacion.Model.EntidadBase;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Investigacion.Model {
-    public class InformacionInvestigadorModel : BaseModel {
+namespace Investigacion.Model.InformacionInvestigador.DTOModels {
+    public class RespuestaInformacionInvestigadorDTO {
 
-        #region Constrcutor
-        public InformacionInvestigadorModel() { }
+        #region Constructor
+        public RespuestaInformacionInvestigadorDTO() { }
+        public RespuestaInformacionInvestigadorDTO(string Error) {
+            this.Error = Error;
+        }
         #endregion
 
         #region Atributos
@@ -17,6 +19,7 @@ namespace Investigacion.Model {
         public string Email { get; set; }
         public string Direccion { get; set; }
         public string Pais { get; set; }
+        public string Error { get; set; }
         public InvestigadorModel InvestigadorModel { get; set; }
         public EspecialidadModel EspecialidadModel { get; set; }
         #endregion

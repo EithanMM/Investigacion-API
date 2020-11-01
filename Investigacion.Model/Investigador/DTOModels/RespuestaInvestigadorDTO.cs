@@ -1,12 +1,15 @@
-﻿using Investigacion.Model.CustomEntities;
-using Investigacion.Model.EntidadBase;
+﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
-namespace Investigacion.Model {
-    public class InvestigadorModel : BaseModel {
+namespace Investigacion.Model.Investigador.DTOModels {
+    public class RespuestaInvestigadorDTO {
 
         #region Constructor
-        public InvestigadorModel() { }
+        public RespuestaInvestigadorDTO() { }
+        public RespuestaInvestigadorDTO(string Error) {
+            this.Error = Error;
+        }
         #endregion
 
         #region Atributos
@@ -14,6 +17,7 @@ namespace Investigacion.Model {
         public string Cedula { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
+        public string Error { get; set; }
         #endregion
     }
 }

@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Investigacion.Core {
-    public class TipoTrabajoCore : ILecturaCore<TipoTrabajoModel>,
-                                   IEscrituraCore<TipoTrabajoModel, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>,
+    public class TipoTrabajoCore : ILecturaCore<RespuestaTipoTrabajoDTO>,
+                                   IEscrituraCore<RespuestaTipoTrabajoDTO, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>,
                                    IEliminarCore {
 
         #region Variables y cosntructor
@@ -28,55 +28,55 @@ namespace Investigacion.Core {
         #endregion
 
         #region Metodos
-        public async Task<TipoTrabajoModel> Agregar(AgregarTipoTrabajoDTO Modelo) {
+        public async Task<RespuestaTipoTrabajoDTO> Agregar(AgregarTipoTrabajoDTO Modelo) {
 
-            TipoTrabajoModel Respuesta;
+            RespuestaTipoTrabajoDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
             string Resultado = await IEscrituraTipoTrabajo.Agregar(Modelo);
-            Respuesta = Utf8Json.JsonSerializer.Deserialize<TipoTrabajoModel>(Resultado);
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaTipoTrabajoDTO>(Resultado);
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 
-        public async Task<TipoTrabajoModel> Actualizar(ActualizarTipoTrabajoDTO Modelo) {
+        public async Task<RespuestaTipoTrabajoDTO> Actualizar(ActualizarTipoTrabajoDTO Modelo) {
 
-            TipoTrabajoModel Respuesta;
+            RespuestaTipoTrabajoDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
             string Resultado = await IEscrituraTipoTrabajo.Actualizar(Modelo);
-            Respuesta = Utf8Json.JsonSerializer.Deserialize<TipoTrabajoModel>(Resultado);
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaTipoTrabajoDTO>(Resultado);
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 
-        public async Task<TipoTrabajoModel> Obtener(string Consecutivo) {
+        public async Task<RespuestaTipoTrabajoDTO> Obtener(string Consecutivo) {
 
-            TipoTrabajoModel Respuesta;
+            RespuestaTipoTrabajoDTO Respuesta;
 
             if (Consecutivo == null) throw new ExcepcionCore("Debe digitar un consecutivo valido.");
             string Resultado = await ILecturaTipoTrabajo.Obtener(Consecutivo.ToUpper());
             if (Resultado.Equals("")) throw new NotFoundExcepcionCore("El tipo de trabajo con consecutivo " + Consecutivo.ToUpper() + " no existe.");
-            Respuesta = Utf8Json.JsonSerializer.Deserialize<TipoTrabajoModel>(Resultado);
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaTipoTrabajoDTO>(Resultado);
             return Respuesta;
         }
 
-        public async Task<IEnumerable<TipoTrabajoModel>> Listar() {
+        public async Task<IEnumerable<RespuestaTipoTrabajoDTO>> Listar() {
 
             var Respuesta = await ILecturaTipoTrabajo.Listar();
             if (Respuesta == null) throw new ExcepcionCore("Modelo nulo");
-            IEnumerable<TipoTrabajoModel> Resultado = Utf8Json.JsonSerializer.Deserialize<IEnumerable<TipoTrabajoModel>>(Respuesta);
+            IEnumerable<RespuestaTipoTrabajoDTO> Resultado = Utf8Json.JsonSerializer.Deserialize<IEnumerable<RespuestaTipoTrabajoDTO>>(Respuesta);
             return Resultado;
         }
 
-        public async Task<Paginacion<TipoTrabajoModel>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+        public async Task<Paginacion<RespuestaTipoTrabajoDTO>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
 
             NumeroPagina = (NumeroPagina > 0) ? NumeroPagina : PaginaDefault;
             TamanoPagina = (TamanoPagina > 0) ? TamanoPagina : RegistrosDefault;
 
             var Respuesta = await ILecturaTipoTrabajo.Listar();
-            var RespuestaPaginada = Paginacion<TipoTrabajoModel>.Paginar(
-                Utf8Json.JsonSerializer.Deserialize<IEnumerable<TipoTrabajoModel>>(Respuesta),
+            var RespuestaPaginada = Paginacion<RespuestaTipoTrabajoDTO>.Paginar(
+                Utf8Json.JsonSerializer.Deserialize<IEnumerable<RespuestaTipoTrabajoDTO>>(Respuesta),
                 (int)NumeroPagina, (int)TamanoPagina);
 
             return RespuestaPaginada;

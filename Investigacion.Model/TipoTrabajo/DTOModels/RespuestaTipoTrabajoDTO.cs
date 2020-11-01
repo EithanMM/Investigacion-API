@@ -1,18 +1,20 @@
-﻿using Investigacion.Model.EntidadBase;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Investigacion.Model {
-    public class RolModel : BaseModel {
+namespace Investigacion.Model.TipoTrabajo.DTOModels {
+    public class RespuestaTipoTrabajoDTO {
 
         #region Constructor
-        public RolModel() { }
+        public RespuestaTipoTrabajoDTO(string Error) {
+            this.Error = Error;
+        }
         #endregion
 
         #region Atributos
         public System.Guid Consecutivo { get; set; }
         public string Descripcion { get; set; }
+        public string Error { get; set; }
         #endregion
     }
 }

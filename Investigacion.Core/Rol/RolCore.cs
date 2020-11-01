@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Investigacion.Core {
-    public class RolCore : ILecturaCore<RolModel>,
-                           IEscrituraCore<RolModel, AgregarRolDTO, ActualizarRolDTO> {
+    public class RolCore : ILecturaCore<RespuestaRolDTO>,
+                           IEscrituraCore<RespuestaRolDTO, AgregarRolDTO, ActualizarRolDTO> {
 
         #region Atrobutos y constructor
         private static int PaginaDefault = 1;
@@ -25,55 +25,55 @@ namespace Investigacion.Core {
         #endregion
 
         #region Metodos
-        public async Task<RolModel> Agregar(AgregarRolDTO Modelo) {
+        public async Task<RespuestaRolDTO> Agregar(AgregarRolDTO Modelo) {
 
-            RolModel Respuesta;
+            RespuestaRolDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
             string Resultado = await IEscrituraRol.Agregar(Modelo);
-            Respuesta = Utf8Json.JsonSerializer.Deserialize<RolModel>(Resultado);
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaRolDTO>(Resultado);
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 
-        public async Task<RolModel> Actualizar(ActualizarRolDTO Modelo) {
+        public async Task<RespuestaRolDTO> Actualizar(ActualizarRolDTO Modelo) {
 
-            RolModel Respuesta;
+            RespuestaRolDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
             string Resultado = await IEscrituraRol.Actualizar(Modelo);
-            Respuesta = Utf8Json.JsonSerializer.Deserialize<RolModel>(Resultado);
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaRolDTO>(Resultado);
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 
-        public async Task<IEnumerable<RolModel>> Listar() {
+        public async Task<IEnumerable<RespuestaRolDTO>> Listar() {
 
             var Respuesta = await ILecturaRol.Listar();
             if (Respuesta == null) throw new ExcepcionCore("Modelo nulo");
-            IEnumerable<RolModel> Resultado = Utf8Json.JsonSerializer.Deserialize<IEnumerable<RolModel>>(Respuesta);
+            IEnumerable<RespuestaRolDTO> Resultado = Utf8Json.JsonSerializer.Deserialize<IEnumerable<RespuestaRolDTO>>(Respuesta);
             return Resultado;
         }
 
-        public async Task<Paginacion<RolModel>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+        public async Task<Paginacion<RespuestaRolDTO>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
 
             NumeroPagina = ((int)NumeroPagina > 0) ? NumeroPagina : PaginaDefault;
             TamanoPagina = ((int)TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; 
             NumeroPagina = ((int)NumeroPagina - 1);
 
             var Respuesta = await ILecturaRol.ListarPaginacion((int)NumeroPagina * (int)TamanoPagina, (int)TamanoPagina);
-            EntidadPaginacion<RolModel> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<RolModel>>(Respuesta);
-            var RespuestaPaginada = Paginacion<RolModel>.PaginarSQL(Objeto.Data, (int)NumeroPagina, (int)TamanoPagina, Objeto.Total);
+            EntidadPaginacion<RespuestaRolDTO> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<RespuestaRolDTO>>(Respuesta);
+            var RespuestaPaginada = Paginacion<RespuestaRolDTO>.PaginarSQL(Objeto.Data, (int)NumeroPagina, (int)TamanoPagina, Objeto.Total);
             return RespuestaPaginada;
         }
 
-        public async Task<RolModel> Obtener(string Consecutivo) {
+        public async Task<RespuestaRolDTO> Obtener(string Consecutivo) {
 
-            RolModel Respuesta;
+            RespuestaRolDTO Respuesta;
 
             if (Consecutivo.Equals("")) throw new ExcepcionCore("No introdujo el consecutivo.");
             string Resultado = await ILecturaRol.Obtener(Consecutivo);
-            Respuesta = Utf8Json.JsonSerializer.Deserialize<RolModel>(Resultado);
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaRolDTO>(Resultado);
             if (Respuesta == null) throw new NotFoundExcepcionCore("El Rol con consecutivo " + Consecutivo + " no existe");
             if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;

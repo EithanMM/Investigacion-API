@@ -23,8 +23,8 @@ namespace Investigacion.Model {
         public DateTime FechaCreacion { get; set; }
         public DateTime? Revocado { get; set; }
         public bool TokenActivo => Revocado == null && !TokenExpirado;
-
         public UsuarioModel UsuarioModel { get; set; }
+        public string Error { get; set; }
         #endregion
     }
 }
