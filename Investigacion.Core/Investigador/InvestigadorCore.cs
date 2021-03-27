@@ -14,9 +14,7 @@ namespace Investigacion.Core {
                                     IEliminarCore {
 
         #region Variables y constructor
-        private static int PaginaDefault = 1;
         private static int RegistrosDefault = 5;
-        private static int PosicionMensajeError = 6;
         private readonly ILecturaDataAccess<InvestigadorModel> ILecturanvestigador;
         private readonly IEliminarDataAccess IEliminarInvestigador;
         private readonly IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO> IEscrituraInestigador;
@@ -32,23 +30,35 @@ namespace Investigacion.Core {
 
         public async Task<RespuestaInvestigadorDTO> Agregar(AgregarInvestigadorDTO Modelo) {
 
+            ErrorModel Error;
             RespuestaInvestigadorDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
             string Resultado = await IEscrituraInestigador.Agregar(Modelo);
+
+            if (Resultado.Contains("Error")) {
+                Error = Utf8Json.JsonSerializer.Deserialize<ErrorModel>(Resultado);
+                throw new ExcepcionCore(Error);
+            }
+
             Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaInvestigadorDTO>(Resultado);
-            if (Respuesta == null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 
         public async Task<RespuestaInvestigadorDTO> Actualizar(ActualizarInvestigadorDTO Modelo) {
 
+            ErrorModel Error;
             RespuestaInvestigadorDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
             string Resultado = await IEscrituraInestigador.Actualizar(Modelo);
+
+            if (Resultado.Contains("Error")) {
+                Error = Utf8Json.JsonSerializer.Deserialize<ErrorModel>(Resultado);
+                throw new ExcepcionCore(Error);
+            }
+
             Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaInvestigadorDTO>(Resultado);
-            if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 
@@ -60,27 +70,32 @@ namespace Investigacion.Core {
             return Resultado;
         }
 
-        public async Task<Paginacion<RespuestaInvestigadorDTO>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+        public async Task<Paginacion<RespuestaInvestigadorDTO>> ListarPaginacion(int NumeroPagina, int TamanoPagina) {
 
-            NumeroPagina = ((int)NumeroPagina > 0) ? NumeroPagina : PaginaDefault;  // Si el numero de pagina menor o igual a 0, se setea en 1.
-            TamanoPagina = ((int)TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; // Si el tamano de pagina menor o igual a 0, se setea en 5.
-            NumeroPagina = ((int)NumeroPagina - 1);
+            if (NumeroPagina != 0) NumeroPagina = NumeroPagina - 1;
+            if (TamanoPagina == 0) TamanoPagina = RegistrosDefault;
 
-            var Respuesta = await ILecturanvestigador.ListarPaginacion((int)NumeroPagina * (int)TamanoPagina, (int)TamanoPagina);
+            var Respuesta = await ILecturanvestigador.ListarPaginacion(NumeroPagina * TamanoPagina, TamanoPagina);
             EntidadPaginacion<RespuestaInvestigadorDTO> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<RespuestaInvestigadorDTO>>(Respuesta);
-            var RespuestaPaginada = Paginacion<RespuestaInvestigadorDTO>.PaginarSQL(Objeto.Data, (int)NumeroPagina, (int)TamanoPagina, Objeto.Total);
+            var RespuestaPaginada = Paginacion<RespuestaInvestigadorDTO>.PaginarSQL(Objeto.Data, NumeroPagina, TamanoPagina, Objeto.Total);
             return RespuestaPaginada;
         }
 
         public async Task<RespuestaInvestigadorDTO> Obtener(string Consecutivo) {
 
+            ErrorModel Error;
             RespuestaInvestigadorDTO Respuesta;
 
             if (Consecutivo.Equals("")) throw new ExcepcionCore("No introdujo el consecutivo.");
             string Resultado = await ILecturanvestigador.Obtener(Consecutivo);
+
+            if (Resultado.Contains("Error")) {
+                Error = Utf8Json.JsonSerializer.Deserialize<ErrorModel>(Resultado);
+                throw new ExcepcionCore(Error);
+            }
+
             Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaInvestigadorDTO>(Resultado);
             if (Respuesta == null) throw new NotFoundExcepcionCore("El investigador con consecutivo " + Consecutivo + " no existe");
-            if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 

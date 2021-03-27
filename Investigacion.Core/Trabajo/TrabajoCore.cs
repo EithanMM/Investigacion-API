@@ -10,17 +10,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Investigacion.Core {
-    public class TrabajoCore : ILecturaCore<TrabajoModel>,
-                               IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO> {
+    public class TrabajoCore : ILecturaCore<RespuestaTrabajoDTO>,
+                               IEscrituraCore<RespuestaTrabajoDTO, AgregarTrabajoDTO, ActualizarTrabajoDTO> {
 
         #region Variables y constructor
+        private static int RegistrosDefault = 5;
         private readonly ILecturaDataAccess<TrabajoModel> ILecturaTrabajo;
         private readonly ILecturaDataAccess<TipoTrabajoModel> ILecturaTipoTrabajo;
         private readonly ILecturaDataAccess<InvestigadorModel> ILecturaInvestigador;
         private readonly IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO> IEscrituraTrabajo;
-        private static int PaginaDefault = 1;
-        private static int RegistrosDefault = 5;
-        private static int PosicionMensajeError = 6;
 
         public TrabajoCore(ILecturaDataAccess<TrabajoModel> ILecturaTrabajo, ILecturaDataAccess<TipoTrabajoModel> ILecturaTipoTrabajo, ILecturaDataAccess<InvestigadorModel> ILecturaInvestigador, IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO> IEscrituraTrabajo) {
             this.ILecturaTrabajo = ILecturaTrabajo;
@@ -32,9 +30,10 @@ namespace Investigacion.Core {
 
         #region Metodos
 
-        public async Task<TrabajoModel> Agregar(AgregarTrabajoDTO Modelo) {
+        public async Task<RespuestaTrabajoDTO> Agregar(AgregarTrabajoDTO Modelo) {
 
-            TrabajoModel Respuesta = new TrabajoModel();
+            ErrorModel Error;
+            RespuestaTrabajoDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
 
@@ -47,37 +46,40 @@ namespace Investigacion.Core {
             Modelo.IdInvestigador = (Utf8Json.JsonSerializer.Deserialize<InvestigadorModel>(InvestigadorJson.Replace("LLP_", ""))).Id;
             Modelo.IdTipoTrabajo = (Utf8Json.JsonSerializer.Deserialize<TipoTrabajoModel>(TipoTrabajoJson.Replace("LLP_", ""))).Id;
             string Resultado = await IEscrituraTrabajo.Agregar(Modelo);
-            Respuesta = Utf8Json.JsonSerializer.Deserialize<TrabajoModel>(Resultado);
-            if (Respuesta == null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
 
+            if (Resultado.Contains("Error")) {
+                Error = Utf8Json.JsonSerializer.Deserialize<ErrorModel>(Resultado);
+                throw new ExcepcionCore(Error);
+            }
+
+            Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaTrabajoDTO>(Resultado);
             return Respuesta;
         }
 
-        public Task<TrabajoModel> Actualizar(ActualizarTrabajoDTO Modelo) {
+        public Task<RespuestaTrabajoDTO> Actualizar(ActualizarTrabajoDTO Modelo) {
             throw new NotImplementedException();
         }
 
-        public async Task<TrabajoModel> Obtener(string Consecutivo) {
+        public async Task<RespuestaTrabajoDTO> Obtener(string Consecutivo) {
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<TrabajoModel>> Listar() {
+        public async Task<IEnumerable<RespuestaTrabajoDTO>> Listar() {
 
             string Resultado = await ILecturaTrabajo.Listar();
             if (Resultado == null) throw new ExcepcionCore("Modelo nulo");
-            IEnumerable<TrabajoModel> Respuesta = Utf8Json.JsonSerializer.Deserialize<IEnumerable<TrabajoModel>>(Resultado);
+            IEnumerable<RespuestaTrabajoDTO> Respuesta = Utf8Json.JsonSerializer.Deserialize<IEnumerable<RespuestaTrabajoDTO>>(Resultado);
             return Respuesta;
         }
 
-        public async Task<Paginacion<TrabajoModel>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
-            NumeroPagina = (NumeroPagina > 0) ? NumeroPagina : PaginaDefault;
-            TamanoPagina = (TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; 
+        public async Task<Paginacion<RespuestaTrabajoDTO>> ListarPaginacion(int NumeroPagina, int TamanoPagina) {
 
-            string Resultado = await ILecturaTrabajo.Listar();
-            var RespuestaPaginada = Paginacion<TrabajoModel>.Paginar(
-                Utf8Json.JsonSerializer.Deserialize<IEnumerable<TrabajoModel>>(Resultado),
-                (int)NumeroPagina, (int)TamanoPagina);
+            if(NumeroPagina != 0) NumeroPagina = NumeroPagina - 1;
+            if (TamanoPagina == 0) TamanoPagina = RegistrosDefault;
 
+            string Respuesta = await ILecturaTrabajo.ListarPaginacion(NumeroPagina * TamanoPagina, TamanoPagina);
+            EntidadPaginacion<RespuestaTrabajoDTO> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<RespuestaTrabajoDTO>>(Respuesta);
+            var RespuestaPaginada = Paginacion<RespuestaTrabajoDTO>.PaginarSQL(Objeto.Data, NumeroPagina, TamanoPagina, Objeto.Total);
             return RespuestaPaginada;
         }
         #endregion

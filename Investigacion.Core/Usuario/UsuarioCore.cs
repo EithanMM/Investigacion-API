@@ -4,17 +4,12 @@ using Investigacion.InterfaceDataAccess;
 using Investigacion.Model;
 using Investigacion.Model.CustomEntities;
 using Investigacion.Model.Usuario.DTOModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Investigacion.Core {
@@ -63,11 +58,11 @@ namespace Investigacion.Core {
                 if (Respuesta == null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
 
                 //Obtenemos el usuario recien generado con su rol especifico.
-               //string UsuarioConRol = await ILecturaUsuario.Obtener(Respuesta.Consecutivo.ToString());
-               //Respuesta = Utf8Json.JsonSerializer.Deserialize<UsuarioModel>(UsuarioConRol);
+                //string UsuarioConRol = await ILecturaUsuario.Obtener(Respuesta.Consecutivo.ToString());
+                //Respuesta = Utf8Json.JsonSerializer.Deserialize<UsuarioModel>(UsuarioConRol);
 
                 //Generamos Refresh Token
-               //RefreshTokenModel Token = ITokenRefreshTokenCore.GenerarRefreshToken(Respuesta);
+                //RefreshTokenModel Token = ITokenRefreshTokenCore.GenerarRefreshToken(Respuesta);
 
                 //Registramos Refresh Token, llamando a otro servicio de la capa Core
                 //RefreshToken = await ITokenRefreshTokenCore.AgregarRefreshToken(Token);
@@ -162,6 +157,10 @@ namespace Investigacion.Core {
                 //Verificamos si la llave generada es igual a la guardada en la BD
                 return ChequearLlave.SequenceEqual(Llave);
             }
+        }
+
+        public Task<Paginacion<UsuarioModel>> ListarPaginacion(int NumeroPagina, int TamanoPagina) {
+            throw new NotImplementedException();
         }
         #endregion
     }

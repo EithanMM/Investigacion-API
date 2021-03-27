@@ -65,7 +65,7 @@ namespace Investigacion.DataAccess {
 
             using (IDbConnection DbConexion = new SqlConnection(ConnectionString)) {
 
-                IEnumerable<TrabajoModel> Resultado = await DbConexion.QueryAsync<TrabajoModel, InvestigadorModel, TipoTrabajoModel, TrabajoModel>("dbo.[SP_OBTENER_TODOS_TRABAJO]",
+                IEnumerable<RespuestaTrabajoDTO> Resultado = await DbConexion.QueryAsync<RespuestaTrabajoDTO, InvestigadorModel, TipoTrabajoModel, RespuestaTrabajoDTO>("dbo.[SP_OBTENER_TODOS_TRABAJO]",
                     map: (tt, ti, ttt) => {
                         tt.InvestigadorModel = ti;
                         tt.TipoTrabajoModel = ttt;

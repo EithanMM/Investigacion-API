@@ -6,15 +6,12 @@ namespace Investigacion.Model.TipoTrabajo.DTOModels {
     public class RespuestaTipoTrabajoDTO {
 
         #region Constructor
-        public RespuestaTipoTrabajoDTO(string Error) {
-            this.Error = Error;
-        }
+        public RespuestaTipoTrabajoDTO() {}
         #endregion
 
         #region Atributos
         public System.Guid Consecutivo { get; set; }
         public string Descripcion { get; set; }
-        public string Error { get; set; }
         #endregion
     }
 }

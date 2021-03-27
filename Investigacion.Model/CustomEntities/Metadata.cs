@@ -10,10 +10,6 @@
         public int? NumeroPaginaAnterior { get; set; } //Guarda el numero de la pagina anterior
         public bool PaginaAnterior { get; set; }
         public bool PaginaSiguiente { get; set; }
-
-        //Atributos que guardan urls - HEITIUS 
-        public string PaginaSiguienteUrl { get; set; }
-        public string PaginaAnteriorUrl { get; set; }
         #endregion
     }
 }

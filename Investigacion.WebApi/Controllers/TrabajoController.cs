@@ -57,7 +57,7 @@ namespace Investigacion.WebApi.Controllers {
         [HttpGet]
         [ActionName("ListarPaginacion")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<Paginacion<TrabajoModel>>))]
-        public async Task<IActionResult> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+        public async Task<IActionResult> ListarPaginacion(int NumeroPagina, int TamanoPagina) {
 
             var Resultado = await ILecturaTrabajo.ListarPaginacion(NumeroPagina, TamanoPagina);
             Metadata MetaData = PaginationHelper<TrabajoModel>.SetMetaData(Resultado);

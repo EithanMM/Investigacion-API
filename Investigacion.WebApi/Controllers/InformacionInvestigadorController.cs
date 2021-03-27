@@ -99,7 +99,7 @@ namespace Investigacion.WebApi.Controllers {
         [Authorize(Roles = "Administrador, Gestor, Invitado")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<Paginacion<InformacionInvestigadorModel>>))]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+        public async Task<IActionResult> ListarPaginacion(int NumeroPagina, int TamanoPagina) {
 
             var Resultado = await ILecturaInformacionInvestigador.ListarPaginacion(NumeroPagina, TamanoPagina);
             Metadata MetaData = PaginationHelper<InformacionInvestigadorModel>.SetMetaData(Resultado);

@@ -1,12 +1,12 @@
-﻿using Investigacion.Model.EntidadBase;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Investigacion.Model {
-    public class TrabajoModel : BaseModel {
+namespace Investigacion.Model.Trabajo.DTOModels {
+    public class RespuestaTrabajoDTO {
 
         #region Constructor
-        public TrabajoModel() {
-        }
+        public RespuestaTrabajoDTO() {}
         #endregion
 
         #region Atributos
@@ -15,6 +15,10 @@ namespace Investigacion.Model {
         public string Consecutivo { get; set; }
         public string Nombre { get; set; }
         public DateTime Fecha { get; set; }
+
+        public InvestigadorModel InvestigadorModel { get; set; }
+        public TipoTrabajoModel TipoTrabajoModel { get; set; }
         #endregion
+
     }
 }

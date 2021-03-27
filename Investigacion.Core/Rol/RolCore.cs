@@ -12,9 +12,7 @@ namespace Investigacion.Core {
                            IEscrituraCore<RespuestaRolDTO, AgregarRolDTO, ActualizarRolDTO> {
 
         #region Atrobutos y constructor
-        private static int PaginaDefault = 1;
         private static int RegistrosDefault = 5;
-        private static int PosicionMensajeError = 6;
         private readonly ILecturaDataAccess<RolModel> ILecturaRol;
         private readonly IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO> IEscrituraRol;
 
@@ -27,23 +25,35 @@ namespace Investigacion.Core {
         #region Metodos
         public async Task<RespuestaRolDTO> Agregar(AgregarRolDTO Modelo) {
 
+            ErrorModel Error;
             RespuestaRolDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
             string Resultado = await IEscrituraRol.Agregar(Modelo);
+
+            if (Resultado.Contains("Error")) {
+                Error = Utf8Json.JsonSerializer.Deserialize<ErrorModel>(Resultado);
+                throw new ExcepcionCore(Error);
+            }
+
             Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaRolDTO>(Resultado);
-            if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 
         public async Task<RespuestaRolDTO> Actualizar(ActualizarRolDTO Modelo) {
 
+            ErrorModel Error;
             RespuestaRolDTO Respuesta;
 
             if (Modelo == null) throw new ExcepcionCore("Modelo nulo");
             string Resultado = await IEscrituraRol.Actualizar(Modelo);
+
+            if (Resultado.Contains("Error")) {
+                Error = Utf8Json.JsonSerializer.Deserialize<ErrorModel>(Resultado);
+                throw new ExcepcionCore(Error);
+            }
+
             Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaRolDTO>(Resultado);
-            if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
 
@@ -55,27 +65,32 @@ namespace Investigacion.Core {
             return Resultado;
         }
 
-        public async Task<Paginacion<RespuestaRolDTO>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+        public async Task<Paginacion<RespuestaRolDTO>> ListarPaginacion(int NumeroPagina, int TamanoPagina) {
 
-            NumeroPagina = ((int)NumeroPagina > 0) ? NumeroPagina : PaginaDefault;
-            TamanoPagina = ((int)TamanoPagina > 0) ? TamanoPagina : RegistrosDefault; 
-            NumeroPagina = ((int)NumeroPagina - 1);
+            if (NumeroPagina != 0) NumeroPagina = NumeroPagina - 1;
+            if (TamanoPagina == 0) TamanoPagina = RegistrosDefault;
 
-            var Respuesta = await ILecturaRol.ListarPaginacion((int)NumeroPagina * (int)TamanoPagina, (int)TamanoPagina);
+            var Respuesta = await ILecturaRol.ListarPaginacion(NumeroPagina * TamanoPagina, TamanoPagina);
             EntidadPaginacion<RespuestaRolDTO> Objeto = Utf8Json.JsonSerializer.Deserialize<EntidadPaginacion<RespuestaRolDTO>>(Respuesta);
-            var RespuestaPaginada = Paginacion<RespuestaRolDTO>.PaginarSQL(Objeto.Data, (int)NumeroPagina, (int)TamanoPagina, Objeto.Total);
+            var RespuestaPaginada = Paginacion<RespuestaRolDTO>.PaginarSQL(Objeto.Data, NumeroPagina, TamanoPagina, Objeto.Total);
             return RespuestaPaginada;
         }
 
         public async Task<RespuestaRolDTO> Obtener(string Consecutivo) {
 
+            ErrorModel Error;
             RespuestaRolDTO Respuesta;
 
             if (Consecutivo.Equals("")) throw new ExcepcionCore("No introdujo el consecutivo.");
             string Resultado = await ILecturaRol.Obtener(Consecutivo);
+
+            if (Resultado.Contains("Error")) {
+                Error = Utf8Json.JsonSerializer.Deserialize<ErrorModel>(Resultado);
+                throw new ExcepcionCore(Error);
+            }
+
             Respuesta = Utf8Json.JsonSerializer.Deserialize<RespuestaRolDTO>(Resultado);
             if (Respuesta == null) throw new NotFoundExcepcionCore("El Rol con consecutivo " + Consecutivo + " no existe");
-            if (Respuesta.Error != null) throw new ExcepcionCore(Resultado.Substring(PosicionMensajeError));
             return Respuesta;
         }
         #endregion

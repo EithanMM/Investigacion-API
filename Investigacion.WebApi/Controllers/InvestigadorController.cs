@@ -47,8 +47,8 @@ namespace Investigacion.WebApi.Controllers {
         /// <summary>
         /// Actualiza un registro de investigador
         /// </summary>
-        [HttpPatch(Name = "Actualizar")]
         [ActionName("Actualizar")]
+        [HttpPatch(Name = "Actualizar")]
         [Authorize(Roles = "Administrador, Gestor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<RespuestaInvestigadorDTO>))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -63,8 +63,8 @@ namespace Investigacion.WebApi.Controllers {
         /// <summary>
         /// Obtiene un registro de investigador segun su consecutivo
         /// </summary>
-        [HttpGet(Name = "Obtener")]
         [ActionName("Obtener")]
+        [HttpGet("{Consecutivo}", Name = "Obtener")]
         //[Authorize(Roles = "Administrador, Gestor, Invitado")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<RespuestaInvestigadorDTO>))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -88,39 +88,34 @@ namespace Investigacion.WebApi.Controllers {
         public async Task<IActionResult> Listar() {
 
             IEnumerable<RespuestaInvestigadorDTO> Resultado = await ILecturaInvestigador.Listar();
-            //RespuestaApi<IEnumerable<RespuestaInvestigadorDTO>> Respuesta = new RespuestaApi<IEnumerable<RespuestaInvestigadorDTO>>(Resultado);
             return this.HATEOASResult(Resultado, (v) => this.Ok(new RespuestaApi<object>(v)));
-            //return Ok(Respuesta);
         }
 
         /// <summary>
         /// Obtiene los registros de los investigadores segun su paginacion
         /// </summary>
-        [HttpGet]
+        [HttpGet("{NumeroPagina}/{TamanoPagina}")]
         [ActionName("ListarPaginacion")]
-        [Authorize(Roles = "Administrador, Gestor, Invitado")]
+        //[Authorize(Roles = "Administrador, Gestor, Invitado")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<Paginacion<RespuestaInvestigadorDTO>>))]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        public async Task<IActionResult> ListarPaginacion(int? NumeroPagina, int? TamanoPagina) {
+        public async Task<IActionResult> ListarPaginacion(int NumeroPagina, int TamanoPagina) {
 
             var Resultado = await ILecturaInvestigador.ListarPaginacion(NumeroPagina, TamanoPagina);
             Metadata MetaData = PaginationHelper<RespuestaInvestigadorDTO>.SetMetaData(Resultado);
-            RespuestaApi<Paginacion<RespuestaInvestigadorDTO>> Respuesta = new RespuestaApi<Paginacion<RespuestaInvestigadorDTO>>(Resultado) { Meta = MetaData };
-            return Ok(Respuesta);
-            //Response.Headers.Add("X-Pagination", Utf8Json.JsonSerializer.ToJsonString(MetaData));
+            return this.HATEOASResult(Resultado, (v) => this.Ok(new RespuestaApi<object>(v) { Meta = MetaData }));
         }
 
         /// <summary>
         /// Elimina un registro de investigador segun su consecutivo
         /// </summary>
-        [HttpDelete("{Consecutivo}", Name = "Eliminar")]
         [ActionName("Eliminar")]
+        [HttpDelete("{Consecutivo}", Name = "Eliminar")]
         //[Authorize(Roles = "Administrador, Gestor")]
         [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(RespuestaApi<bool>))]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
-        [HttpDelete]
         public async Task<IActionResult> Eliminar(string Consecutivo) {
 
             bool Resultado = await IEliminarInvestigador.Eliminar(Consecutivo);

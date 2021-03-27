@@ -40,7 +40,7 @@ namespace Investigacion.WebApi.Extensiones {
 
             /**************************** LECTURA ***************************************/
             services.AddTransient<ILecturaCore<RespuestaRolDTO>, RolCore>();
-            services.AddTransient<ILecturaCore<TrabajoModel>, TrabajoCore>();
+            services.AddTransient<ILecturaCore<RespuestaTrabajoDTO>, TrabajoCore>();
             services.AddTransient<ILecturaCore<UsuarioModel>, UsuarioCore>();
             services.AddTransient<ILecturaCore<RespuestaTipoTrabajoDTO>, TipoTrabajoCore>();
             services.AddTransient<ILecturaCore<RespuestaInvestigadorDTO>, InvestigadorCore>();
@@ -49,7 +49,7 @@ namespace Investigacion.WebApi.Extensiones {
 
             /*************************** ESCRITURA **************************************/
             services.AddTransient<IEscrituraCore<RespuestaRolDTO, AgregarRolDTO, ActualizarRolDTO>, RolCore>();
-            services.AddTransient<IEscrituraCore<TrabajoModel, AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoCore>();
+            services.AddTransient<IEscrituraCore<RespuestaTrabajoDTO, AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoCore>();
             services.AddTransient<IEscrituraCore<UsuarioModel, AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioCore>();
             services.AddTransient<IEscrituraCore<RespuestaTipoTrabajoDTO, AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoCore>();
             services.AddTransient<IEscrituraCore<RespuestaInvestigadorDTO, AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorCore>();
@@ -73,32 +73,32 @@ namespace Investigacion.WebApi.Extensiones {
         public static void AddDependencyInjectionDataAccess(this IServiceCollection services, IConfiguration configuration) {
 
             /**************************** LECTURA ***************************************/
-            services.AddTransient<ILecturaDataAccess<RolModel>, RolDataAccess>();
-            services.AddTransient<ILecturaDataAccess<TrabajoModel>, TrabajoDataAccess>();
-            services.AddTransient<ILecturaDataAccess<UsuarioModel>, UsuarioDataAccess>();
-            services.AddTransient<ILecturaDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
-            services.AddTransient<ILecturaDataAccess<EspecialidadModel>, EspecialidadDataAccess>();
-            services.AddTransient<ILecturaDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
-            services.AddTransient<ILecturaDataAccess<InformacionInvestigadorModel>, InformacionInvestigadorDataAccess>();
+            services.AddSingleton<ILecturaDataAccess<RolModel>, RolDataAccess>();
+            services.AddSingleton<ILecturaDataAccess<TrabajoModel>, TrabajoDataAccess>();
+            services.AddSingleton<ILecturaDataAccess<UsuarioModel>, UsuarioDataAccess>();
+            services.AddSingleton<ILecturaDataAccess<TipoTrabajoModel>, TipoTrabajoDataAccess>();
+            services.AddSingleton<ILecturaDataAccess<EspecialidadModel>, EspecialidadDataAccess>();
+            services.AddSingleton<ILecturaDataAccess<InvestigadorModel>, InvestigadorDataAccess>();
+            services.AddSingleton<ILecturaDataAccess<InformacionInvestigadorModel>, InformacionInvestigadorDataAccess>();
 
             /*************************** ESCRITURA **************************************/
-            services.AddTransient<IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO>, RolDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarEspecialidadDTO, ActualizarEspecialidadDTO>, EspecialidadDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorDataAccess>();
-            services.AddTransient<IEscrituraDataAccess<AgregarInformacionInvestigadorDTO, ActualizarInformacionInvestigadorDTO>, InformacionInvestigadorDataAccess>();
+            services.AddSingleton<IEscrituraDataAccess<AgregarRolDTO, ActualizarRolDTO>, RolDataAccess>();
+            services.AddSingleton<IEscrituraDataAccess<AgregarTrabajoDTO, ActualizarTrabajoDTO>, TrabajoDataAccess>();
+            services.AddSingleton<IEscrituraDataAccess<AgregarUsuarioDTO, ActualizarUsuarioDTO>, UsuarioDataAccess>();
+            services.AddSingleton<IEscrituraDataAccess<AgregarTipoTrabajoDTO, ActualizarTipoTrabajoDTO>, TipoTrabajoDataAccess>();
+            services.AddSingleton<IEscrituraDataAccess<AgregarEspecialidadDTO, ActualizarEspecialidadDTO>, EspecialidadDataAccess>();
+            services.AddSingleton<IEscrituraDataAccess<AgregarInvestigadorDTO, ActualizarInvestigadorDTO>, InvestigadorDataAccess>();
+            services.AddSingleton<IEscrituraDataAccess<AgregarInformacionInvestigadorDTO, ActualizarInformacionInvestigadorDTO>, InformacionInvestigadorDataAccess>();
 
             /************************** ELIMINACION *************************************/
-            services.AddTransient<IEliminarDataAccess, InvestigadorDataAccess>();
-            services.AddTransient<IEliminarDataAccess, TipoTrabajoDataAccess>();
+            services.AddSingleton<IEliminarDataAccess, InvestigadorDataAccess>();
+            services.AddSingleton<IEliminarDataAccess, TipoTrabajoDataAccess>();
 
             /************************** SEGURIDAD *************************************/
-            services.AddTransient<ISeguridadDataAccess<ActualizarPasswordDTO, AccesoUsuarioDTO>, UsuarioDataAccess>();
+            services.AddSingleton<ISeguridadDataAccess<ActualizarPasswordDTO, AccesoUsuarioDTO>, UsuarioDataAccess>();
 
             /*************************** TOKEN ****************************************/
-            services.AddTransient<ITokenDataAccess<RefreshTokenModel>, RefreshTokenDataAccess>();
+            services.AddSingleton<ITokenDataAccess<RefreshTokenModel>, RefreshTokenDataAccess>();
         }
 
         /// <summary>

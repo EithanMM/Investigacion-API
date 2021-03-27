@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Investigacion.Model;
+using System;
 
 namespace Investigacion.Core.Excepciones {
     class ExcepcionCore : Exception {
@@ -6,5 +7,7 @@ namespace Investigacion.Core.Excepciones {
         public ExcepcionCore() { }
 
         public ExcepcionCore(string Mensaje) : base(Mensaje) { }
+
+        public ExcepcionCore(ErrorModel Modelo) : base(Modelo.Error) { }
     }
 }

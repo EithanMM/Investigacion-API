@@ -43,7 +43,10 @@ namespace Investigacion.DataAccess {
                     InvestigadorModel RespuestaDTO = Mapper.Map<InvestigadorModel>(Resultado);
                     return Utf8Json.JsonSerializer.ToJsonString(RespuestaDTO);
                 }
-                else return "Error:" + Resultado.Error;
+                else {
+                    ErrorModel Error = Mapper.Map<ErrorModel>(Resultado);
+                    return Utf8Json.JsonSerializer.ToJsonString(Error);
+                }
             }
         }
 
@@ -60,7 +63,10 @@ namespace Investigacion.DataAccess {
                     InvestigadorModel RespuestaDTO = Mapper.Map<InvestigadorModel>(Resultado);
                     return Utf8Json.JsonSerializer.ToJsonString(RespuestaDTO);
                 }
-                else return "Error:" + Resultado.Error;
+                else {
+                    ErrorModel Error = Mapper.Map<ErrorModel>(Resultado);
+                    return Utf8Json.JsonSerializer.ToJsonString(Error);
+                }
             }
         }
 

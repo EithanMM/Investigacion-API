@@ -18,6 +18,6 @@ namespace Investigacion.InterfaceCore {
         /// <summary>
         /// Obtiene la lista de elementos segun su paginacions
         /// </summary>
-        Task<Paginacion<T>> ListarPaginacion(int? NumeroPagina, int? TamanoPagina);
+        Task<Paginacion<T>> ListarPaginacion(int NumeroPagina, int TamanoPagina);
     }
 }
